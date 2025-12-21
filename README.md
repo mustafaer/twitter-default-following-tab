@@ -22,7 +22,7 @@ A lightweight, privacy-focused browser extension that automatically switches to 
 - **🧠 Smart Content Detection** - Intelligently waits for tweets to actually load before displaying
 - **⚡ Adaptive Performance** - Fast on fiber/5G networks (~150ms), patient on slow 3G connections
 - **🌍 Language Independent** - Works with any Twitter language setting (English, Spanish, Japanese, etc.)
-- **🔒 Zero Permissions Required** - No data collection, no tracking, completely private and secure
+- **🔒 Zero Permissions Required** - No data collection, no tracking, completely private and secure ([Privacy Policy](PRIVACY_POLICY.md))
 - **📱 SPA Compatible** - Works seamlessly with Twitter's single-page application architecture
 - **🆓 Free & Open Source** - GNU GPL v3 licensed, community-driven development
 
@@ -177,6 +177,19 @@ Your support helps maintain and improve this extension:
 
 Every contribution, big or small, is appreciated! 🙏
 
+## 🔒 Privacy Policy
+
+This extension is privacy-first by design. We collect **zero data** about you or your usage.
+
+**Key Privacy Features:**
+- ✅ No data collection whatsoever
+- ✅ No analytics or tracking
+- ✅ No external server communication
+- ✅ Works entirely locally in your browser
+- ✅ Open source - verify the code yourself
+
+Read our complete [Privacy Policy](PRIVACY_POLICY.md) for full details.
+
 ## 📄 License
 
 This project is licensed under the GNU General Public License v3.0 - see the [LICENSE](LICENSE) file for details.
@@ -255,7 +268,7 @@ A: Yes! You can manually click the "For You" tab anytime. The extension only cha
 ### Privacy & Security
 
 **Q: Does this extension collect my data?**
-A: Absolutely not! The extension requires zero permissions and collects nothing. Completely private and secure.
+A: Absolutely not! The extension requires zero permissions and collects nothing. Completely private and secure. Read our [Privacy Policy](PRIVACY_POLICY.md) for full details.
 
 **Q: What permissions does this Twitter extension need?**
 A: None! It only needs access to twitter.com and x.com domains. No cookies, no data, no tracking.

@@ -23,6 +23,7 @@ cp content.js build/
 cp -r icons build/ 2>/dev/null || echo "⚠️  Warning: icons folder not found (optional)"
 cp LICENSE build/ 2>/dev/null || echo "⚠️  Warning: LICENSE not found (optional)"
 cp README.md build/ 2>/dev/null || echo "⚠️  Warning: README not found (optional)"
+cp PRIVACY_POLICY.md build/ 2>/dev/null || echo "⚠️  Warning: PRIVACY_POLICY not found (optional)"
 
 echo "✅ Files copied to build/"
 
