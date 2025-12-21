@@ -157,7 +157,7 @@ twitter-default-following-tab/
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/twitter-default-following-tab.git
+   git clone https://github.com/mustafaer/twitter-default-following-tab.git
    cd twitter-default-following-tab
    ```
 
@@ -232,8 +232,8 @@ Current focus areas for contributions:
 
 ## ❓ Questions?
 
-- Open a [Discussion](https://github.com/yourusername/twitter-default-following-tab/discussions)
-- Check existing [Issues](https://github.com/yourusername/twitter-default-following-tab/issues)
+- Open a [Discussion](https://github.com/mustafaer/twitter-default-following-tab/discussions)
+- Check existing [Issues](https://github.com/mustafaer/twitter-default-following-tab/issues)
 
 ## 📜 License
 
