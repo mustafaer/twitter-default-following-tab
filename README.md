@@ -20,6 +20,7 @@ A lightweight, privacy-focused browser extension that automatically switches to 
 - **🔄 Automatic Tab Switching** - Opens the "Following" tab by default instead of "For You" algorithmic feed
 - **✨ Seamless Transition** - Invisible switching - you never see the "For You" content flash
 - **🧠 Smart Content Detection** - Intelligently waits for tweets to actually load before displaying
+- **👤 Respects User Choice** - If you manually click "For You" tab, the extension won't interfere
 - **⚡ Adaptive Performance** - Fast on fiber/5G networks (~150ms), patient on slow 3G connections
 - **🌍 Language Independent** - Works with any Twitter language setting (English, Spanish, Japanese, etc.)
 - **🔒 Zero Permissions Required** - No data collection, no tracking, completely private and secure ([Privacy Policy](PRIVACY_POLICY.md))
@@ -81,6 +82,7 @@ This Twitter automation extension uses intelligent content detection to ensure a
 3. **Automatic Tab Switch** - Programmatically clicks the "Following" tab
 4. **Smart Content Detection** - Checks every 50ms for tweets to load (maximum 2.5 seconds)
 5. **Seamless Display** - Shows content once Following tweets are fully loaded
+6. **User Interaction Respect** - Detects manual tab clicks and respects user choice (no auto-switch after manual selection)
 
 ### Performance Metrics by Network Speed:
 
@@ -100,6 +102,7 @@ This Twitter automation extension uses intelligent content detection to ensure a
 **Technical Implementation:**
 - DOM MutationObserver for dynamic content changes
 - Position-based tab detection (language-agnostic)
+- User interaction detection (respects manual tab selections)
 - Debounced event handling for performance
 - History API interception for SPA navigation
 - Smart timeout protection (never hangs forever)
@@ -263,7 +266,7 @@ A: It's a lightweight automation that only switches tabs - it doesn't post, like
 A: No! The extension hides "For You" content during the switch. You only see the Following feed.
 
 **Q: Can I switch back to "For You" if I want?**
-A: Yes! You can manually click the "For You" tab anytime. The extension only changes the default.
+A: Yes! You can manually click the "For You" tab anytime. The extension respects your choice and won't auto-switch you back to Following until you navigate to a new page.
 
 ### Privacy & Security
 

@@ -39,6 +39,12 @@ const DEBOUNCE_DELAY = 200; // ms
 const INITIAL_TAB_CHECK_DELAY = 100; // ms
 const PAGE_LOAD_CHECK_DELAY = 150; // ms
 const TRANSITION_END_DELAY = 100; // ms
+const USER_INTERACTION_TIMEOUT = 3000; // ms - how long to respect user's manual tab choice
+
+// State tracking
+let userManuallyChangedTab = false; // Track if user manually clicked a tab
+let userInteractionTimer = null; // Timer to reset user interaction flag
+let lastNavigationTime = Date.now(); // Track last navigation event
 
 /**
  * Adds CSS to hide content during tab transition
@@ -130,6 +136,56 @@ function log(...args) {
 }
 
 /**
+ * Marks that user manually changed tabs
+ * Prevents auto-switching for a period of time to respect user choice
+ */
+function markUserInteraction() {
+  userManuallyChangedTab = true;
+  log('User manually changed tab - respecting their choice');
+
+  // Clear existing timer
+  if (userInteractionTimer) {
+    clearTimeout(userInteractionTimer);
+  }
+
+  // Reset flag after timeout (if user navigates, it will be reset immediately)
+  userInteractionTimer = setTimeout(() => {
+    userManuallyChangedTab = false;
+    log('User interaction timeout - auto-switching enabled again');
+  }, USER_INTERACTION_TIMEOUT);
+}
+
+/**
+ * Resets user interaction flag on navigation
+ * Called when user navigates to homepage via URL change
+ */
+function resetUserInteraction() {
+  userManuallyChangedTab = false;
+  if (userInteractionTimer) {
+    clearTimeout(userInteractionTimer);
+    userInteractionTimer = null;
+  }
+  log('Navigation detected - reset user interaction flag');
+}
+
+/**
+ * Sets up tab click listeners to detect user manual interaction
+ */
+function setupTabClickListeners() {
+  // Use event delegation on document to catch all tab clicks
+  document.addEventListener('click', (event) => {
+    // Check if click was on a tab element
+    const target = event.target.closest('[role="tab"]');
+    if (target && isHomePage()) {
+      // User manually clicked a tab
+      markUserInteraction();
+    }
+  }, true); // Use capture phase to catch before other handlers
+
+  log('Tab click listeners setup complete');
+}
+
+/**
  * Checks if current page is Twitter/X homepage
  * @returns {boolean} True if on homepage
  */
@@ -197,6 +253,13 @@ function findFollowingTab() {
  * @returns {boolean} True if successful
  */
 function clickFollowingTab() {
+  // Don't auto-switch if user manually selected a different tab
+  if (userManuallyChangedTab) {
+    log('User manually changed tab - skipping auto-switch');
+    endTransition();
+    return false;
+  }
+
   // Skip if Following tab is already active
   if (isFollowingTabActive()) {
     log('Following tab already active, skipping...');
@@ -267,6 +330,10 @@ const handlePageChange = debounce(() => {
   if (isHomePage()) {
     log('On home page, checking tabs...');
 
+    // Reset user interaction on navigation (fresh page load)
+    resetUserInteraction();
+    lastNavigationTime = Date.now();
+
     // Hide content immediately (before "For You" tab is visible)
     if (!isFollowingTabActive()) {
       startTransition();
@@ -295,14 +362,23 @@ function setupObserver() {
   }
 
   observer = new MutationObserver((mutations) => {
+    // Don't process if user recently interacted with tabs
+    if (userManuallyChangedTab) {
+      return;
+    }
+
     // Only process relevant changes (added nodes)
     const hasRelevantChanges = mutations.some(mutation =>
       mutation.type === 'childList' && mutation.addedNodes.length > 0
     );
 
     if (hasRelevantChanges && isHomePage()) {
-      log('DOM changed on home page');
-      handlePageChange();
+      // Check if this is a recent navigation (not just tab content change)
+      const timeSinceNavigation = Date.now() - lastNavigationTime;
+      if (timeSinceNavigation < 1000) { // Within 1 second of navigation
+        log('DOM changed on home page after navigation');
+        handlePageChange();
+      }
     }
   });
 
@@ -325,8 +401,15 @@ function initialize() {
   // Add transition CSS
   addTransitionStyle();
 
+  // Setup tab click listeners to detect user manual interactions
+  setupTabClickListeners();
+
   // Initial check if on homepage
   if (isHomePage()) {
+    // Reset user interaction on initial load
+    resetUserInteraction();
+    lastNavigationTime = Date.now();
+
     // Hide content immediately
     if (!isFollowingTabActive()) {
       startTransition();
@@ -349,18 +432,24 @@ function initialize() {
   history.pushState = function(...args) {
     originalPushState.apply(this, args);
     log('pushState detected');
+    resetUserInteraction(); // Reset on navigation
+    lastNavigationTime = Date.now();
     handlePageChange();
   };
 
   history.replaceState = function(...args) {
     originalReplaceState.apply(this, args);
     log('replaceState detected');
+    resetUserInteraction(); // Reset on navigation
+    lastNavigationTime = Date.now();
     handlePageChange();
   };
 
   // Listen for popstate (back/forward buttons)
   window.addEventListener('popstate', () => {
     log('popstate detected');
+    resetUserInteraction(); // Reset on navigation
+    lastNavigationTime = Date.now();
     handlePageChange();
   });
 
