@@ -23,7 +23,7 @@ A lightweight, privacy-focused browser extension that automatically switches to 
 - **👤 Respects User Choice** - If you manually click "For You" tab, the extension won't interfere
 - **⚡ Adaptive Performance** - Fast on fiber/5G networks (~150ms), patient on slow 3G connections
 - **🌍 Language Independent** - Works with any Twitter language setting (English, Spanish, Japanese, etc.)
-- **🔒 Zero Permissions Required** - No data collection, no tracking, completely private and secure ([Privacy Policy](PRIVACY_POLICY.md))
+- **🔒 Privacy-Focused** - Minimal data collection (only stores your tab preference setting locally) ([Privacy Policy](PRIVACY_POLICY.md))
 - **📱 SPA Compatible** - Works seamlessly with Twitter's single-page application architecture
 - **🆓 Free & Open Source** - GNU GPL v3 licensed, community-driven development
 
@@ -182,14 +182,26 @@ Every contribution, big or small, is appreciated! 🙏
 
 ## 🔒 Privacy Policy
 
-This extension is privacy-first by design. We collect **zero data** about you or your usage.
+This extension is privacy-first by design. We collect **minimal data** - only your tab preference.
 
-**Key Privacy Features:**
-- ✅ No data collection whatsoever
-- ✅ No analytics or tracking
-- ✅ No external server communication
-- ✅ Works entirely locally in your browser
-- ✅ Open source - verify the code yourself
+**What We Store:**
+- ✅ Your tab preference (one simple setting: e.g., "1" for Following tab)
+- ✅ Stored locally in Chrome sync storage
+- ✅ Approximately 20 bytes of data
+- ✅ Format: `{"defaultTab": "1"}`
+
+**What We DON'T Collect:**
+- ❌ No personal information
+- ❌ No browsing history or analytics
+- ❌ No tracking of any kind
+- ❌ No external server communication
+- ❌ No tweets, messages, or profile data
+
+**Permissions (v2.0.0):**
+- `storage` - To save your tab preference locally
+- `scripting` - To detect available tabs and extract names
+- `activeTab` - To read current page when you open settings
+- Host permissions for `twitter.com` and `x.com`
 
 Read our complete [Privacy Policy](PRIVACY_POLICY.md) for full details.
 
@@ -382,11 +394,11 @@ If you find this extension useful, please consider giving it a star on GitHub! I
 - Privacy-focused Twitter extension
 - Open source Twitter tools
 
-**SEO Keywords:** Twitter extension, X extension, Following tab, Chrome extension, browser extension, Twitter automation, social media tools, productivity extension, chronological timeline, Twitter following feed, skip for you, Twitter tools, Manifest V3, privacy-focused, zero permissions, open source, GPL-3, Twitter productivity, X.com tools, social network extension, Twitter customization, feed customization
+**SEO Keywords:** Twitter extension, X extension, Following tab, Chrome extension, browser extension, Twitter automation, social media tools, productivity extension, chronological timeline, Twitter following feed, skip for you, Twitter tools, Manifest V3, privacy-focused, minimal permissions, open source, GPL-3, Twitter productivity, X.com tools, social network extension, Twitter customization, feed customization
 
 ---
 
-Made with ❤️ by the open source community | Licensed under GNU GPL v3 | Privacy-focused • No tracking • No data collection
+Made with ❤️ by the open source community | Licensed under GNU GPL v3 | Privacy-focused • No tracking • Minimal data
 
 **#TwitterExtension #ChromeExtension #Productivity #OpenSource #Privacy #FollowingTab #XCom**
 
