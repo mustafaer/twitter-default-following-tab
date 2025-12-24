@@ -7,7 +7,7 @@ A lightweight, privacy-focused browser extension that automatically switches to 
 **Keywords:** Twitter extension, X.com extension, Following tab, Chrome extension, Browser extension, Twitter automation, Social media productivity, Chronological timeline, Twitter following feed, Skip for you tab, Twitter tools, Manifest V3
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-[![Chrome Web Store](https://img.shields.io/badge/Chrome-Extension-green.svg)](https://chrome.google.com/webstore)
+[![Chrome Web Store](https://img.shields.io/badge/Chrome-Extension-green.svg)](https://chromewebstore.google.com/detail/twitter-default-following/afnfdobnmoffaiiboblgdcoeefobihbd)
 [![GitHub stars](https://img.shields.io/github/stars/mustafaer/twitter-default-following-tab.svg?style=social)](https://github.com/mustafaer/twitter-default-following-tab/stargazers)
 [![GitHub issues](https://img.shields.io/github/issues/mustafaer/twitter-default-following-tab.svg)](https://github.com/mustafaer/twitter-default-following-tab/issues)
 
@@ -39,7 +39,7 @@ A lightweight, privacy-focused browser extension that automatically switches to 
 ### From Chrome Web Store (Recommended - Coming Soon)
 The easiest way to install this Twitter extension for Chrome, Edge, Brave, and Opera.
 
-1. Visit the [Chrome Web Store page](#) (link coming soon)
+1. Visit the [Chrome Web Store page](https://chromewebstore.google.com/detail/twitter-default-following/afnfdobnmoffaiiboblgdcoeefobihbd)
 2. Click "Add to Chrome" or "Add to Edge/Brave/Opera"
 3. Enjoy your cleaner Twitter/X experience with automatic Following tab!
 
