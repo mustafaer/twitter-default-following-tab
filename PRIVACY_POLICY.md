@@ -88,11 +88,21 @@ Any updates will maintain the same privacy-respecting principles. If we ever nee
 
 ## Your Rights
 
-Since we do not collect any data about you:
-- There is no data to request
-- There is no data to delete
-- There is no data to export
-- There is no data to correct
+### Data You Can Control
+
+Since we only store your tab preference setting:
+
+**You can:**
+- ✅ **View your data**: Open extension settings to see your current tab preference
+- ✅ **Change your data**: Change your tab preference anytime via the popup/settings
+- ✅ **Delete your data**: Uninstall the extension to remove all stored data
+- ✅ **Export your data**: Your setting is just one simple value (e.g., "1") - you can note it if needed
+
+**What we store about you:**
+- Just your tab preference (one small setting)
+- No personal information
+- No usage history
+- No tracking data
 
 ## Children's Privacy
 
@@ -128,5 +138,17 @@ This extension is distributed in the hope that it will be useful, but WITHOUT AN
 
 ---
 
-**Summary:** This extension is privacy-focused by design. It performs a simple task (switching tabs) entirely in your browser without collecting, storing, or transmitting any data about you or your usage.
+## Summary
+
+**Privacy-First Design:**
+- ✅ Stores only your tab preference (1 simple setting)
+- ✅ No personal data collection
+- ✅ No tracking or analytics
+- ✅ No external server communication
+- ✅ All operations happen locally in your browser
+- ✅ Open source - verify the code yourself
+
+**Your tab preference setting is stored locally and never leaves your device** except through Chrome's optional built-in sync feature (which is encrypted and controlled by Google, not us).
+
+We believe in transparency: Check our [source code on GitHub](https://github.com/mustafaer/twitter-default-following-tab) to verify everything stated in this policy.
 

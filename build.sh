@@ -20,9 +20,14 @@ echo "📦 Copying files..."
 # Copy required files
 cp manifest.json build/
 cp content.js build/
+cp popup.html build/
+cp popup.js build/
+cp options.html build/
+cp options.js build/
 cp -r icons build/ 2>/dev/null || echo "⚠️  Warning: icons folder not found (optional)"
 cp LICENSE build/ 2>/dev/null || echo "⚠️  Warning: LICENSE not found (optional)"
 cp README.md build/ 2>/dev/null || echo "⚠️  Warning: README not found (optional)"
+cp CHANGELOG.md build/ 2>/dev/null || echo "⚠️  Warning: CHANGELOG not found (optional)"
 cp PRIVACY_POLICY.md build/ 2>/dev/null || echo "⚠️  Warning: PRIVACY_POLICY not found (optional)"
 
 echo "✅ Files copied to build/"

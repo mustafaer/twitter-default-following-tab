@@ -31,6 +31,11 @@
 // Debug mode - set to true for development
 const DEBUG = false;
 
+// Default settings
+const DEFAULT_SETTINGS = {
+  defaultTab: '1' // Tab index 1 (Following tab by default)
+};
+
 // Configuration constants
 const TRANSITION_STYLE_ID = 'twitter-following-transition-style';
 const CONTENT_CHECK_INTERVAL = 50; // ms between content checks
@@ -45,6 +50,53 @@ const USER_INTERACTION_TIMEOUT = 3000; // ms - how long to respect user's manual
 let userManuallyChangedTab = false; // Track if user manually clicked a tab
 let userInteractionTimer = null; // Timer to reset user interaction flag
 let lastNavigationTime = Date.now(); // Track last navigation event
+let currentSettings = DEFAULT_SETTINGS; // Current settings from storage
+let cachedTabCount = 0; // Cached tab count for performance
+
+/**
+ * Load settings from storage
+ */
+async function loadSettings() {
+  try {
+    const result = await chrome.storage.sync.get(DEFAULT_SETTINGS);
+    currentSettings = result;
+    log('Settings loaded:', currentSettings);
+    return result;
+  } catch (error) {
+    console.error('Error loading settings:', error);
+    currentSettings = DEFAULT_SETTINGS;
+    return DEFAULT_SETTINGS;
+  }
+}
+
+/**
+ * Get current tab count from Twitter page
+ * @returns {number} Number of tabs available
+ */
+function getTabCount() {
+  const tabList = document.querySelector('[role="tablist"]');
+  if (!tabList) {
+    return 0;
+  }
+
+  const tabs = tabList.querySelectorAll('[role="tab"]');
+  const count = tabs.length;
+
+  if (count !== cachedTabCount) {
+    cachedTabCount = count;
+    log('Tab count detected:', count);
+
+    // Send tab count to popup/options if they're listening
+    chrome.runtime.sendMessage({
+      type: 'TAB_COUNT_UPDATE',
+      count: count
+    }).catch(() => {
+      // Ignore errors if popup/options not open
+    });
+  }
+
+  return count;
+}
 
 /**
  * Adds CSS to hide content during tab transition
@@ -195,39 +247,57 @@ function isHomePage() {
 }
 
 /**
- * Checks if the Following tab is currently active
- * @returns {boolean} True if Following tab is active
+ * Checks if the target tab (based on settings) is currently active
+ * @returns {boolean} True if target tab is active
  */
 function isFollowingTabActive() {
+  // If disabled, return true to prevent switching
+  if (currentSettings.defaultTab === 'disabled') {
+    return true;
+  }
+
   const tabList = document.querySelector('[role="tablist"]');
   if (!tabList) {
     return false;
   }
 
   const tabs = tabList.querySelectorAll('[role="tab"]');
+  const targetIndex = parseInt(currentSettings.defaultTab);
 
   // Need at least 2 tabs (For You, Following)
   if (tabs.length < 2) {
     return false;
   }
 
-  // Check if second tab (Following) is active
-  const secondTab = tabs[1];
-  return secondTab.getAttribute('aria-selected') === 'true';
+  // Check if we have enough tabs
+  if (targetIndex < 0 || targetIndex >= tabs.length) {
+    return false;
+  }
+
+  // Check if target tab is active
+  const targetTab = tabs[targetIndex];
+  return targetTab.getAttribute('aria-selected') === 'true';
 }
 
 /**
- * Finds the Following tab element
+ * Finds the target tab element based on user settings
  * Uses position-based selection (language-independent)
  *
- * Twitter tab order is always:
- * 1. For You (index 0)
- * 2. Following (index 1)
- * 3. Other custom tabs (if any)
+ * Twitter tab order is typically:
+ * 0. For You (index 0)
+ * 1. Following (index 1)
+ * 2. Other custom tabs (if any)
+ * 3. More custom tabs
  *
- * @returns {Element|null} The Following tab element or null
+ * @returns {Element|null} The target tab element or null
  */
-function findFollowingTab() {
+function findTargetTab() {
+  // Check if extension is disabled
+  if (currentSettings.defaultTab === 'disabled') {
+    log('Extension is disabled');
+    return null;
+  }
+
   const tabList = document.querySelector('[role="tablist"]');
   if (!tabList) {
     log('Tab list not found');
@@ -235,24 +305,40 @@ function findFollowingTab() {
   }
 
   const tabs = tabList.querySelectorAll('[role="tab"]');
+  const targetIndex = parseInt(currentSettings.defaultTab);
+
+  // Update cached tab count
+  getTabCount();
 
   if (tabs.length < 2) {
     log('Not enough tabs found:', tabs.length);
     return null;
   }
 
-  // Return second tab (Following)
-  const followingTab = tabs[1];
-  log('Found second tab (Following) at index 1:', followingTab);
+  // Check if target index is valid
+  if (targetIndex < 0 || targetIndex >= tabs.length) {
+    log('Target tab index out of range:', targetIndex, 'available tabs:', tabs.length);
+    return null;
+  }
 
-  return followingTab;
+  const targetTab = tabs[targetIndex];
+  log('Found target tab at index', targetIndex, ':', targetTab);
+
+  return targetTab;
 }
 
 /**
- * Clicks the Following tab and manages transition
+ * Clicks the target tab (based on settings) and manages transition
  * @returns {boolean} True if successful
  */
 function clickFollowingTab() {
+  // Don't auto-switch if extension is disabled
+  if (currentSettings.defaultTab === 'disabled') {
+    log('Extension is disabled - skipping auto-switch');
+    endTransition();
+    return false;
+  }
+
   // Don't auto-switch if user manually selected a different tab
   if (userManuallyChangedTab) {
     log('User manually changed tab - skipping auto-switch');
@@ -260,9 +346,9 @@ function clickFollowingTab() {
     return false;
   }
 
-  // Skip if Following tab is already active
+  // Skip if target tab is already active
   if (isFollowingTabActive()) {
-    log('Following tab already active, skipping...');
+    log('Target tab already active, skipping...');
 
     // Check if content is loaded
     if (isFollowingContentLoaded()) {
@@ -276,21 +362,21 @@ function clickFollowingTab() {
     return true;
   }
 
-  const followingTab = findFollowingTab();
+  const targetTab = findTargetTab();
 
-  if (followingTab) {
-    log('Found Following tab, clicking...', followingTab);
+  if (targetTab) {
+    log('Found target tab, clicking...', targetTab);
 
     // Hide content during transition
     startTransition();
 
     // Click the tab
-    followingTab.click();
+    targetTab.click();
 
     // Wait for content to load before showing
     waitForFollowingContent((success) => {
       if (success) {
-        log('Following content loaded successfully');
+        log('Target tab content loaded successfully');
       } else {
         log('Timeout - showing content anyway');
       }
@@ -299,7 +385,7 @@ function clickFollowingTab() {
 
     return true;
   } else {
-    log('Following tab not found');
+    log('Target tab not found');
     endTransition(); // If tab not found, remove transition
     return false;
   }
@@ -395,8 +481,11 @@ function setupObserver() {
  * Initializes the extension
  * Sets up observers and intercepts history changes
  */
-function initialize() {
+async function initialize() {
   log('Initializing extension...');
+
+  // Load settings from storage first
+  await loadSettings();
 
   // Add transition CSS
   addTransitionStyle();
@@ -410,8 +499,8 @@ function initialize() {
     resetUserInteraction();
     lastNavigationTime = Date.now();
 
-    // Hide content immediately
-    if (!isFollowingTabActive()) {
+    // Hide content immediately (if extension is not disabled)
+    if (currentSettings.defaultTab !== 'disabled' && !isFollowingTabActive()) {
       startTransition();
     }
 
@@ -423,6 +512,21 @@ function initialize() {
 
   // Setup DOM observer
   setupObserver();
+
+  // Listen for settings changes
+  chrome.storage.onChanged.addListener((changes, namespace) => {
+    if (namespace === 'sync' && changes.defaultTab) {
+      log('Settings changed:', changes.defaultTab.newValue);
+      currentSettings.defaultTab = changes.defaultTab.newValue;
+
+      // Apply new settings immediately if on homepage
+      if (isHomePage()) {
+        resetUserInteraction();
+        lastNavigationTime = Date.now();
+        handlePageChange();
+      }
+    }
+  });
 
   // Intercept History API for SPA navigation
   // Twitter uses pushState/replaceState for navigation

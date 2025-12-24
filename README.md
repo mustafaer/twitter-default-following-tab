@@ -228,11 +228,20 @@ Have an idea? [Open an issue](https://github.com/mustafaer/twitter-default-follo
 
 ## 📊 Technical Details
 
-### Architecture
-- **Manifest V3**: Uses latest Chrome extension standard (future-proof)
-- **Content Script**: Runs on Twitter/X pages only (no background processes)
-- **Zero Permissions**: No special permissions required (maximum privacy)
-- **No Background Script**: Minimal resource usage, no battery drain
+### Architecture (v2.0.0)
+- **Manifest V3**: Latest Chrome extension standard (future-proof)
+- **Content Script**: Runs on Twitter/X pages for tab switching
+- **Popup UI**: Dark mode interface with dynamic dropdown
+- **Options Page**: Full settings page with descriptions
+- **Chrome Storage API**: Saves your preference locally (synced via Chrome)
+- **Dynamic Tab Detection**: Intelligently discovers available tabs
+- **Structure-Based Extraction**: Uses HTML structure, not CSS classes (future-proof)
+
+### Permissions Used
+- `storage` - Save your tab preference
+- `scripting` - Detect tabs and extract names
+- `activeTab` - Read current page for settings
+- Host permissions for Twitter/X domains
 
 ### Browser Compatibility
 - ✅ Chrome 88+ (tested and verified)
@@ -253,28 +262,41 @@ Have an idea? [Open an issue](https://github.com/mustafaer/twitter-default-follo
 
 ### General Questions
 
+**Q: Can I choose which tab opens by default?**
+A: Yes! Version 2.0 lets you choose any tab - Following, Community tabs, or even "For You" if you want.
+
+**Q: How do I change my default tab?**
+A: Click the extension icon in your browser toolbar, select your preferred tab from the dropdown, and it saves automatically.
+
 **Q: How do I make Twitter open to Following tab by default?**
-A: Install this extension! It automatically switches to the Following tab every time you open Twitter or X.com.
+A: Install this extension and select "Tab 1 (Following)" in the settings dropdown. That's it!
+
+**Q: Can I use this for Community tabs?**
+A: Absolutely! If you have community tabs (Tab 2, 3, 4...), they'll appear in the dropdown with their actual names.
 
 **Q: Does this work on both twitter.com and x.com?**
-A: Yes! The extension works on both the twitter.com and x.com domains seamlessly.
+A: Yes! The extension works on both domains seamlessly.
 
-**Q: Is this a Twitter automation tool?**
-A: It's a lightweight automation that only switches tabs - it doesn't post, like, or interact with content.
-
-**Q: Will I ever see the "For You" tab?**
-A: No! The extension hides "For You" content during the switch. You only see the Following feed.
-
-**Q: Can I switch back to "For You" if I want?**
-A: Yes! You can manually click the "For You" tab anytime. The extension respects your choice and won't auto-switch you back to Following until you navigate to a new page.
+**Q: What's new in version 2.0?**
+A: Dark mode UI, dropdown selector, dynamic tab detection, real tab names, and the ability to choose any tab as default!
 
 ### Privacy & Security
 
 **Q: Does this extension collect my data?**
-A: Absolutely not! The extension requires zero permissions and collects nothing. Completely private and secure. Read our [Privacy Policy](PRIVACY_POLICY.md) for full details.
+A: We only store your tab preference (1 small setting) locally in your browser. No personal data, no tracking. Read our [Privacy Policy](PRIVACY_POLICY.md).
 
 **Q: What permissions does this Twitter extension need?**
-A: None! It only needs access to twitter.com and x.com domains. No cookies, no data, no tracking.
+A: v2.0 requires:
+- `storage` - To save your tab preference
+- `scripting` - To detect available tabs
+- `activeTab` - To read current page for settings
+- Host permissions for Twitter/X domains
+
+**Q: Where is my setting stored?**
+A: In your browser's local Chrome storage. If you have Chrome sync enabled, it syncs across your devices (encrypted by Google).
+
+**Q: Is my data sent to any server?**
+A: No! Everything works locally. Your tab preference never leaves your browser (except via Chrome's optional sync feature).
 
 **Q: Is it safe to use?**
 A: Yes! It's open source (GNU GPL v3), you can inspect all code. No malicious behavior, no ads, no tracking.
