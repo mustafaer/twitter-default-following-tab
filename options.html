@@ -4,7 +4,25 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Twitter Default Tab - Settings</title>
+  <!-- Load Inter font from Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --bg-primary: rgba(21, 32, 43, 0.85);
+      --bg-card: rgba(30, 39, 50, 0.6);
+      --border-color: rgba(47, 51, 54, 0.6);
+      --text-main: #e7e9ea;
+      --text-muted: #71767b;
+      --twitter-blue: #1d9bf0;
+      --twitter-blue-glow: rgba(29, 155, 240, 0.25);
+      --success-green: #00ba7c;
+      --success-green-glow: rgba(0, 186, 124, 0.2);
+      --error-red: #f4212e;
+      --error-red-glow: rgba(244, 33, 46, 0.2);
+    }
+
     * {
       margin: 0;
       padding: 0;
@@ -12,93 +30,222 @@
     }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       background: #15202b;
+      background-image: radial-gradient(circle at top right, rgba(29, 155, 240, 0.15), transparent 70%),
+                        radial-gradient(circle at bottom left, rgba(30, 39, 50, 0.3), transparent 60%);
+      color: var(--text-main);
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
       padding: 20px;
+      -webkit-font-smoothing: antialiased;
     }
 
+    /* Glassmorphism Container */
     .container {
-      background: #1e2732;
-      border-radius: 16px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-      max-width: 600px;
+      background: var(--bg-primary);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 24px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+      max-width: 560px;
       width: 100%;
       padding: 40px;
+      position: relative;
     }
 
     h1 {
-      font-size: 28px;
-      color: #e7e9ea;
-      margin-bottom: 8px;
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 6px;
       display: flex;
       align-items: center;
       gap: 12px;
+      letter-spacing: -0.5px;
     }
 
     .logo {
-      width: 36px;
-      height: 36px;
+      width: 32px;
+      height: 32px;
+      filter: drop-shadow(0 0 8px var(--twitter-blue-glow));
     }
 
     .subtitle {
-      color: #71767b;
+      color: var(--text-muted);
       font-size: 14px;
+      font-weight: 500;
       margin-bottom: 32px;
     }
 
     .setting-group {
-      margin-bottom: 32px;
+      margin-bottom: 24px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 20px;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .setting-group:hover {
+      border-color: var(--twitter-blue);
+      box-shadow: 0 0 12px var(--twitter-blue-glow);
+    }
+
+    .setting-group.disabled {
+      opacity: 0.5;
+      pointer-events: none;
+      border-color: var(--border-color) !important;
+      box-shadow: none !important;
+    }
+
+    /* Toggle Switch Section */
+    .toggle-group {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .setting-info {
+      flex: 1;
     }
 
     .setting-label {
-      font-size: 16px;
-      font-weight: 600;
-      color: #e7e9ea;
-      margin-bottom: 12px;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 4px;
       display: block;
     }
 
     .setting-description {
-      font-size: 14px;
-      color: #71767b;
-      margin-bottom: 16px;
+      font-size: 13px;
+      color: var(--text-muted);
       line-height: 1.5;
+    }
+
+    /* Switch Component */
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 48px;
+      height: 26px;
+      flex-shrink: 0;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #273340;
+      transition: .3s cubic-bezier(0.4, 0, 0.2, 1);
+      border-radius: 34px;
+      border: 1px solid var(--border-color);
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: var(--text-main);
+      transition: .3s cubic-bezier(0.4, 0, 0.2, 1);
+      border-radius: 50%;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+    }
+
+    input:checked + .slider {
+      background-color: var(--twitter-blue);
+      border-color: var(--twitter-blue);
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(20px);
+      background-color: #fff;
+    }
+
+    /* Dropdown Component */
+    .select-wrapper {
+      position: relative;
+      margin-top: 12px;
+      width: 100%;
     }
 
     select {
       width: 100%;
-      padding: 14px 16px;
-      border: 2px solid #2f3336;
+      padding: 12px 40px 12px 16px;
+      border: 1px solid var(--border-color);
       border-radius: 12px;
-      font-size: 15px;
-      color: #e7e9ea;
-      background-color: #15202b;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-main);
+      background-color: var(--bg-primary);
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
       font-family: inherit;
+      -webkit-appearance: none;
+      appearance: none;
     }
 
-    select:hover {
-      border-color: #1d9bf0;
-      background-color: #1e2732;
+    select:hover:not(:disabled) {
+      border-color: var(--twitter-blue);
+      background-color: rgba(39, 51, 64, 0.8);
+      box-shadow: 0 0 8px var(--twitter-blue-glow);
     }
 
     select:focus {
       outline: none;
-      border-color: #1d9bf0;
-      box-shadow: 0 0 0 3px rgba(29, 155, 240, 0.2);
+      border-color: var(--twitter-blue);
+      box-shadow: 0 0 0 2px var(--twitter-blue-glow);
+    }
+
+    select:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      border-color: var(--border-color);
+    }
+
+    /* Custom Arrow */
+    .select-wrapper::after {
+      content: "";
+      position: absolute;
+      right: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 10px;
+      height: 6px;
+      background-color: var(--text-muted);
+      clip-path: polygon(100% 0%, 0 0%, 50% 100%);
+      pointer-events: none;
+      transition: transform 0.2s ease, background-color 0.2s ease;
+    }
+
+    .select-wrapper:hover::after {
+      background-color: var(--twitter-blue);
     }
 
     option {
       padding: 10px;
       background-color: #15202b;
-      color: #e7e9ea;
+      color: var(--text-main);
     }
 
+    /* Button Layout */
     .button-group {
       display: flex;
       gap: 12px;
@@ -107,76 +254,106 @@
 
     button {
       flex: 1;
-      padding: 14px 24px;
+      padding: 12px 24px;
       border: none;
       border-radius: 9999px;
-      font-size: 15px;
-      font-weight: 600;
+      font-size: 14px;
+      font-weight: 700;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
     }
 
     .btn-primary {
-      background-color: #1d9bf0;
+      background-color: var(--twitter-blue);
       color: white;
+      box-shadow: 0 4px 14px rgba(29, 155, 240, 0.2);
     }
 
     .btn-primary:hover {
       background-color: #1a8cd8;
+      box-shadow: 0 6px 20px rgba(29, 155, 240, 0.35);
+      transform: translateY(-1px);
     }
 
     .btn-primary:active {
-      transform: scale(0.98);
+      transform: translateY(0);
     }
 
     .btn-secondary {
-      background-color: #273340;
-      color: #e7e9ea;
+      background-color: rgba(39, 51, 64, 0.6);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
     }
 
     .btn-secondary:hover {
-      background-color: #38444d;
+      background-color: rgba(56, 68, 77, 0.8);
+      border-color: var(--text-muted);
+      transform: translateY(-1px);
     }
 
+    .btn-secondary:active {
+      transform: translateY(0);
+    }
+
+    /* Notification Banner */
     .status-message {
-      margin-top: 16px;
+      margin-top: 20px;
       padding: 12px 16px;
-      border-radius: 8px;
-      font-size: 14px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 600;
       text-align: center;
       opacity: 0;
-      transition: opacity 0.3s ease;
+      height: 0;
+      padding-top: 0;
+      padding-bottom: 0;
+      overflow: hidden;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 1px solid transparent;
     }
 
     .status-message.show {
+      height: auto;
+      padding: 12px 16px;
       opacity: 1;
     }
 
     .status-message.success {
-      background-color: #00ba7c;
-      color: #ffffff;
+      background-color: var(--success-green-glow);
+      border-color: rgba(0, 186, 124, 0.3);
+      color: #00ba7c;
+      box-shadow: 0 4px 12px rgba(0, 186, 124, 0.1);
     }
 
     .status-message.error {
-      background-color: #f4212e;
-      color: #ffffff;
+      background-color: var(--error-red-glow);
+      border-color: rgba(244, 33, 46, 0.3);
+      color: var(--error-red);
+      box-shadow: 0 4px 12px rgba(244, 33, 46, 0.1);
     }
 
     .footer {
-      margin-top: 32px;
-      padding-top: 24px;
-      border-top: 1px solid #2f3336;
+      margin-top: 36px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border-color);
       text-align: center;
-      font-size: 13px;
-      color: #71767b;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-muted);
     }
 
     .footer a {
-      color: #1d9bf0;
+      color: var(--twitter-blue);
       text-decoration: none;
+      transition: color 0.2s ease;
     }
 
     .footer a:hover {
+      color: #1a8cd8;
       text-decoration: underline;
     }
   </style>
@@ -184,27 +361,70 @@
 <body>
   <div class="container">
     <h1>
-      <svg class="logo" viewBox="0 0 24 24" fill="#1d9bf0">
+      <svg class="logo" viewBox="0 0 24 24" fill="var(--twitter-blue)">
         <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
       </svg>
       Settings
     </h1>
     <p class="subtitle">Customize your Twitter/X homepage experience</p>
 
-    <div class="setting-group">
-      <label class="setting-label" for="defaultTabSelect">Default Tab</label>
-      <p class="setting-description">
-        Choose which tab to automatically open when you visit Twitter/X homepage. Tabs are numbered from left to right (0-based index). The dropdown will show only the tabs currently available on your Twitter page.
-      </p>
+    <!-- Switch toggle -->
+    <div class="setting-group toggle-group">
+      <div class="setting-info">
+        <label class="setting-label" for="enabledToggle">Extension Active State</label>
+        <p class="setting-description">Quickly enable or disable all automatic tab-switching behavior.</p>
+      </div>
+      <label class="switch">
+        <input type="checkbox" id="enabledToggle">
+        <span class="slider"></span>
+      </label>
+    </div>
 
-      <select id="defaultTabSelect" name="defaultTab">
-        <!-- Options will be populated dynamically based on detected tabs -->
-      </select>
+    <!-- Sort Order Dropdown -->
+    <div class="setting-group" id="sortOrderGroup">
+      <div class="setting-info">
+        <label class="setting-label" for="sortOrderSelect">Following Timeline Sort Order</label>
+        <p class="setting-description">
+          Choose whether to force a specific sorting method when opening the Following timeline, or let Twitter/X remember your last selection.
+        </p>
+      </div>
+      <div class="select-wrapper">
+        <select id="sortOrderSelect" name="followingTabSort">
+          <option value="recent">Recent (Chronological - default)</option>
+          <option value="popular">Popular (Algorithmic)</option>
+          <option value="default">Default (Don't Force - respect last choice)</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Dropdown Selector -->
+    <div class="setting-group">
+      <div class="setting-info">
+        <label class="setting-label" for="defaultTabSelect">Default Tab Preference</label>
+        <p class="setting-description">
+          Choose which tab to automatically open when you visit the Twitter/X homepage. Tabs are numbered from left to right (0-based index).
+        </p>
+      </div>
+      <div class="select-wrapper">
+        <select id="defaultTabSelect" name="defaultTab">
+          <!-- Options will be populated dynamically based on detected tabs -->
+        </select>
+      </div>
     </div>
 
     <div class="button-group">
-      <button class="btn-primary" id="saveBtn">Save Settings</button>
-      <button class="btn-secondary" id="resetBtn">Reset to Default</button>
+      <button class="btn-primary" id="saveBtn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/>
+        </svg>
+        Save Settings
+      </button>
+      <button class="btn-secondary" id="resetBtn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+        </svg>
+        Reset
+      </button>
     </div>
 
     <div class="status-message" id="statusMessage"></div>
@@ -215,11 +435,10 @@
         •
         <a href="https://github.com/mustafaer/twitter-default-following-tab/blob/main/PRIVACY_POLICY.md" target="_blank">Privacy Policy</a>
       </p>
-      <p style="margin-top: 8px;">Made with ❤️ by Mustafa ER</p>
+      <p style="margin-top: 10px;">Made with ❤️ by Mustafa ER</p>
     </div>
   </div>
 
   <script src="options.js"></script>
 </body>
 </html>
-

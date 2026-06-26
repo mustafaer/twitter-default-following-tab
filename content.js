@@ -26,6 +26,7 @@
  * - Smart content detection (waits for Following tweets to load)
  * - Adaptive performance (faster on fast networks, patient on slow networks)
  * - Language-independent (position-based tab selection)
+ * - Dynamic sorting order selection (Recent vs Popular)
  */
 
 // Debug mode - set to true for development
@@ -33,25 +34,30 @@ const DEBUG = false;
 
 // Default settings
 const DEFAULT_SETTINGS = {
-  defaultTab: '1' // Tab index 1 (Following tab by default)
+  defaultTab: '1',            // Tab index 1 (Following tab by default)
+  enabled: true,              // Extension enabled by default
+  followingTabSort: 'recent'  // 'recent' (chronological), 'popular' (algorithmic), or 'default' (müdahale etme)
 };
 
 // Configuration constants
 const TRANSITION_STYLE_ID = 'twitter-following-transition-style';
 const CONTENT_CHECK_INTERVAL = 50; // ms between content checks
 const MAX_CONTENT_WAIT_ATTEMPTS = 50; // max 2.5 seconds wait
-const DEBOUNCE_DELAY = 200; // ms
-const INITIAL_TAB_CHECK_DELAY = 100; // ms
-const PAGE_LOAD_CHECK_DELAY = 150; // ms
-const TRANSITION_END_DELAY = 100; // ms
+const DEBOUNCE_DELAY = 100; // ms for page checks
 const USER_INTERACTION_TIMEOUT = 3000; // ms - how long to respect user's manual tab choice
 
 // State tracking
 let userManuallyChangedTab = false; // Track if user manually clicked a tab
 let userInteractionTimer = null; // Timer to reset user interaction flag
-let lastNavigationTime = Date.now(); // Track last navigation event
+let lastUrl = window.location.href; // Track URL changes
 let currentSettings = DEFAULT_SETTINGS; // Current settings from storage
 let cachedTabCount = 0; // Cached tab count for performance
+
+// State for active switching operations
+let tabListObserver = null;
+let tabListSearchTimeoutId = null;
+let contentCheckIntervalId = null;
+let isApplyingSort = false; // Guard to prevent loop when sorting is selected
 
 /**
  * Load settings from storage
@@ -132,10 +138,11 @@ function startTransition() {
  * Ends the transition by showing content
  */
 function endTransition() {
+  // Wait a tiny moment to ensure rendering before showing
   setTimeout(() => {
     document.body.classList.remove('twitter-following-transition');
     log('Transition ended - content visible');
-  }, TRANSITION_END_DELAY);
+  }, 100);
 }
 
 /**
@@ -156,24 +163,131 @@ function isFollowingContentLoaded() {
 }
 
 /**
- * Waits for Following tab content to load
- * @param {Function} callback - Called with (success: boolean) when done
- * @param {number} maxAttempts - Maximum number of check attempts
+ * Clean up all active switching operations (intervals, timeout, observers)
  */
-function waitForFollowingContent(callback, maxAttempts = MAX_CONTENT_WAIT_ATTEMPTS) {
+function cleanupActiveOperations() {
+  if (tabListObserver) {
+    tabListObserver.disconnect();
+    tabListObserver = null;
+  }
+  if (tabListSearchTimeoutId) {
+    clearTimeout(tabListSearchTimeoutId);
+    tabListSearchTimeoutId = null;
+  }
+  if (contentCheckIntervalId) {
+    clearInterval(contentCheckIntervalId);
+    contentCheckIntervalId = null;
+  }
+}
+
+/**
+ * Ensures that the timeline is sorted by the user's preference (Recent vs Popular)
+ */
+function ensureSortOrder(onDone) {
+  if (currentSettings.followingTabSort === 'default' || isApplyingSort) {
+    onDone();
+    return;
+  }
+
+  // Only check sort menu if default tab is active
+  if (!isFollowingTabActive()) {
+    onDone();
+    return;
+  }
+
+  const targetTab = findTargetTab();
+  if (!targetTab) {
+    onDone();
+    return;
+  }
+
+  log('Opening tab sort menu...');
+  isApplyingSort = true;
+  
+  // Start transition to hide menu opening
+  startTransition();
+  targetTab.click(); // Click tab to open dropdown menu
+
+  let attempts = 0;
+  const menuCheckInterval = setInterval(() => {
+    attempts++;
+    const menu = document.querySelector('[role="menu"]');
+    if (menu) {
+      clearInterval(menuCheckInterval);
+      const items = menu.querySelectorAll('[role="menuitem"]');
+      if (items.length >= 2) {
+        // Attempt to find the "Recent" and "Popular" items robustly by text content
+        let recentItem = null;
+        let popularItem = null;
+
+        items.forEach(item => {
+          const text = item.textContent?.toLowerCase() || '';
+          if (text.includes('recent') || text.includes('son') || text.includes('chronological') || text.includes('new')) {
+            recentItem = item;
+          } else if (text.includes('popular') || text.includes('popüler') || text.includes('top')) {
+            popularItem = item;
+          }
+        });
+
+        // Fallbacks if text matching fails
+        if (!popularItem) popularItem = items[0];
+        if (!recentItem) recentItem = items[1];
+
+        const targetSortItem = currentSettings.followingTabSort === 'recent' ? recentItem : popularItem;
+        const isAlreadySelected = targetSortItem.querySelector('svg') !== null;
+
+        if (!isAlreadySelected) {
+          log('Selecting target sort order:', currentSettings.followingTabSort);
+          targetSortItem.click();
+          // Wait for feed to reload
+          waitForFollowingContent(onDone, true);
+        } else {
+          log('Target sort order already selected, closing menu...');
+          targetTab.click(); // Click again to close menu
+          isApplyingSort = false;
+          onDone();
+        }
+      } else {
+        targetTab.click(); // Close menu
+        isApplyingSort = false;
+        onDone();
+      }
+    } else if (attempts >= 20) { // Timeout after 1 second
+      clearInterval(menuCheckInterval);
+      log('Timeout waiting for sort menu');
+      isApplyingSort = false;
+      onDone();
+    }
+  }, 50);
+}
+
+/**
+ * Waits for Following tab content to load
+ */
+function waitForFollowingContent(onDone, skipSort = false) {
   let attempts = 0;
 
-  const checkInterval = setInterval(() => {
+  contentCheckIntervalId = setInterval(() => {
     attempts++;
 
     if (isFollowingContentLoaded()) {
-      clearInterval(checkInterval);
       log('Following content loaded after', attempts, 'attempts');
-      callback(true);
-    } else if (attempts >= maxAttempts) {
-      clearInterval(checkInterval);
+      cleanupActiveOperations();
+      
+      if (!skipSort) {
+        ensureSortOrder(() => {
+          isApplyingSort = false;
+          onDone();
+        });
+      } else {
+        isApplyingSort = false;
+        onDone();
+      }
+    } else if (attempts >= MAX_CONTENT_WAIT_ATTEMPTS) {
       log('Timeout waiting for Following content after', attempts, 'attempts');
-      callback(false); // Timeout - show content anyway
+      cleanupActiveOperations();
+      isApplyingSort = false;
+      onDone();
     }
   }, CONTENT_CHECK_INTERVAL);
 }
@@ -252,7 +366,7 @@ function isHomePage() {
  */
 function isFollowingTabActive() {
   // If disabled, return true to prevent switching
-  if (currentSettings.defaultTab === 'disabled') {
+  if (!currentSettings.enabled || currentSettings.defaultTab === 'disabled') {
     return true;
   }
 
@@ -282,18 +396,10 @@ function isFollowingTabActive() {
 /**
  * Finds the target tab element based on user settings
  * Uses position-based selection (language-independent)
- *
- * Twitter tab order is typically:
- * 0. For You (index 0)
- * 1. Following (index 1)
- * 2. Other custom tabs (if any)
- * 3. More custom tabs
- *
- * @returns {Element|null} The target tab element or null
  */
 function findTargetTab() {
   // Check if extension is disabled
-  if (currentSettings.defaultTab === 'disabled') {
+  if (!currentSettings.enabled || currentSettings.defaultTab === 'disabled') {
     log('Extension is disabled');
     return null;
   }
@@ -328,158 +434,125 @@ function findTargetTab() {
 }
 
 /**
- * Clicks the target tab (based on settings) and manages transition
- * @returns {boolean} True if successful
+ * Helper to wait for the tab list to be rendered in the DOM
  */
-function clickFollowingTab() {
+function waitForTabList() {
+  // Set up temporary MutationObserver specifically looking for the tab list
+  tabListObserver = new MutationObserver((mutations, obs) => {
+    const tabList = document.querySelector('[role="tablist"]');
+    if (tabList && tabList.querySelectorAll('[role="tab"]').length >= 2) {
+      log('Tab list found via MutationObserver');
+      obs.disconnect();
+      tabListObserver = null;
+      if (tabListSearchTimeoutId) {
+        clearTimeout(tabListSearchTimeoutId);
+        tabListSearchTimeoutId = null;
+      }
+      executeTabSwitch();
+    }
+  });
+
+  tabListObserver.observe(document.body, {
+    childList: true,
+    subtree: true
+  });
+
+  // Safety timeout: 3 seconds to find tab list
+  tabListSearchTimeoutId = setTimeout(() => {
+    log('Timeout waiting for tab list');
+    cleanupActiveOperations();
+    endTransition();
+  }, 3000);
+}
+
+/**
+ * Clicks the target tab (based on settings) and manages transition
+ */
+function executeTabSwitch() {
   // Don't auto-switch if extension is disabled
-  if (currentSettings.defaultTab === 'disabled') {
+  if (!currentSettings.enabled || currentSettings.defaultTab === 'disabled') {
     log('Extension is disabled - skipping auto-switch');
     endTransition();
-    return false;
+    return;
   }
 
   // Don't auto-switch if user manually selected a different tab
   if (userManuallyChangedTab) {
     log('User manually changed tab - skipping auto-switch');
     endTransition();
-    return false;
+    return;
   }
 
-  // Skip if target tab is already active
   if (isFollowingTabActive()) {
-    log('Target tab already active, skipping...');
-
-    // Check if content is loaded
+    log('Target tab already active');
     if (isFollowingContentLoaded()) {
-      endTransition(); // Content ready, show immediately
+      ensureSortOrder(endTransition);
     } else {
-      // Wait for content to load
-      waitForFollowingContent(() => {
-        endTransition();
-      });
+      waitForFollowingContent(endTransition);
     }
-    return true;
+    return;
   }
 
   const targetTab = findTargetTab();
-
   if (targetTab) {
-    log('Found target tab, clicking...', targetTab);
-
-    // Hide content during transition
+    log('Found target tab, clicking...');
     startTransition();
-
-    // Click the tab
     targetTab.click();
-
-    // Wait for content to load before showing
-    waitForFollowingContent((success) => {
-      if (success) {
-        log('Target tab content loaded successfully');
-      } else {
-        log('Timeout - showing content anyway');
-      }
-      endTransition();
-    });
-
-    return true;
+    waitForFollowingContent(endTransition);
   } else {
-    log('Target tab not found');
-    endTransition(); // If tab not found, remove transition
-    return false;
+    log('Target tab not found, ending transition');
+    endTransition();
   }
-}
-
-/**
- * Debounce utility to prevent rapid repeated calls
- * @param {Function} func - Function to debounce
- * @param {number} wait - Wait time in milliseconds
- * @returns {Function} Debounced function
- */
-function debounce(func, wait) {
-  let timeout;
-  return function executedFunction(...args) {
-    const later = () => {
-      clearTimeout(timeout);
-      func(...args);
-    };
-    clearTimeout(timeout);
-    timeout = setTimeout(later, wait);
-  };
 }
 
 /**
  * Handles page changes and switches to Following tab if needed
  */
-const handlePageChange = debounce(() => {
-  if (isHomePage()) {
-    log('On home page, checking tabs...');
+function handlePageChange() {
+  cleanupActiveOperations();
 
-    // Reset user interaction on navigation (fresh page load)
-    resetUserInteraction();
-    lastNavigationTime = Date.now();
-
-    // Hide content immediately (before "For You" tab is visible)
-    if (!isFollowingTabActive()) {
-      startTransition();
-    }
-
-    // Wait for DOM to be ready before switching tabs
-    setTimeout(() => {
-      clickFollowingTab();
-    }, INITIAL_TAB_CHECK_DELAY);
-  }
-}, DEBOUNCE_DELAY);
-
-/**
- * MutationObserver instance to watch for DOM changes
- */
-let observer = null;
-
-/**
- * Sets up MutationObserver to watch for DOM changes
- * Monitors Twitter's dynamic content loading
- */
-function setupObserver() {
-  // Disconnect existing observer if any
-  if (observer) {
-    observer.disconnect();
+  if (!isHomePage()) {
+    endTransition();
+    return;
   }
 
-  observer = new MutationObserver((mutations) => {
-    // Don't process if user recently interacted with tabs
-    if (userManuallyChangedTab) {
-      return;
-    }
+  log('On homepage, checking tabs...');
+  resetUserInteraction();
 
-    // Only process relevant changes (added nodes)
-    const hasRelevantChanges = mutations.some(mutation =>
-      mutation.type === 'childList' && mutation.addedNodes.length > 0
-    );
+  if (!currentSettings.enabled || currentSettings.defaultTab === 'disabled') {
+    endTransition();
+    return;
+  }
 
-    if (hasRelevantChanges && isHomePage()) {
-      // Check if this is a recent navigation (not just tab content change)
-      const timeSinceNavigation = Date.now() - lastNavigationTime;
-      if (timeSinceNavigation < 1000) { // Within 1 second of navigation
-        log('DOM changed on home page after navigation');
-        handlePageChange();
-      }
-    }
-  });
+  // Hide content immediately (before "For You" tab is visible)
+  if (!isFollowingTabActive()) {
+    startTransition();
+  }
 
-  // Observe the entire body for changes
-  observer.observe(document.body, {
-    childList: true,
-    subtree: true
-  });
-
-  log('MutationObserver setup complete');
+  // Check if tabs are already loaded in the DOM
+  const tabList = document.querySelector('[role="tablist"]');
+  if (tabList && tabList.querySelectorAll('[role="tab"]').length >= 2) {
+    log('Tab list already present, executing switch immediately');
+    executeTabSwitch();
+  } else {
+    log('Tab list not present, waiting...');
+    waitForTabList();
+  }
 }
 
 /**
+ * Debounced wrapper for page changes to prevent rapid repeated calls
+ */
+const debouncedHandlePageChange = (() => {
+  let timeout;
+  return function() {
+    clearTimeout(timeout);
+    timeout = setTimeout(handlePageChange, DEBOUNCE_DELAY);
+  };
+})();
+
+/**
  * Initializes the extension
- * Sets up observers and intercepts history changes
  */
 async function initialize() {
   log('Initializing extension...');
@@ -493,68 +566,52 @@ async function initialize() {
   // Setup tab click listeners to detect user manual interactions
   setupTabClickListeners();
 
-  // Initial check if on homepage
-  if (isHomePage()) {
-    // Reset user interaction on initial load
-    resetUserInteraction();
-    lastNavigationTime = Date.now();
+  // Initial page check
+  handlePageChange();
 
-    // Hide content immediately (if extension is not disabled)
-    if (currentSettings.defaultTab !== 'disabled' && !isFollowingTabActive()) {
-      startTransition();
-    }
-
-    // Check and switch tabs after DOM is ready
-    setTimeout(() => {
-      clickFollowingTab();
-    }, PAGE_LOAD_CHECK_DELAY);
-  }
-
-  // Setup DOM observer
-  setupObserver();
-
-  // Listen for settings changes
+  // Listen for settings changes (syncing real-time across tabs/panels)
   chrome.storage.onChanged.addListener((changes, namespace) => {
-    if (namespace === 'sync' && changes.defaultTab) {
-      log('Settings changed:', changes.defaultTab.newValue);
-      currentSettings.defaultTab = changes.defaultTab.newValue;
+    if (namespace === 'sync') {
+      let changed = false;
+      if (changes.defaultTab) {
+        log('Settings changed (defaultTab):', changes.defaultTab.newValue);
+        currentSettings.defaultTab = changes.defaultTab.newValue;
+        changed = true;
+      }
+      if (changes.enabled) {
+        log('Settings changed (enabled):', changes.enabled.newValue);
+        currentSettings.enabled = changes.enabled.newValue;
+        changed = true;
+      }
+      if (changes.followingTabSort) {
+        log('Settings changed (followingTabSort):', changes.followingTabSort.newValue);
+        currentSettings.followingTabSort = changes.followingTabSort.newValue;
+        changed = true;
+      }
 
-      // Apply new settings immediately if on homepage
-      if (isHomePage()) {
+      if (changed && isHomePage()) {
         resetUserInteraction();
-        lastNavigationTime = Date.now();
         handlePageChange();
       }
     }
   });
 
-  // Intercept History API for SPA navigation
-  // Twitter uses pushState/replaceState for navigation
-  const originalPushState = history.pushState;
-  const originalReplaceState = history.replaceState;
+  // Setup lightweight URL polling checker (SPA navigation support)
+  setInterval(() => {
+    if (window.location.href !== lastUrl) {
+      lastUrl = window.location.href;
+      log('URL change detected:', lastUrl);
+      debouncedHandlePageChange();
+    }
+  }, 200);
 
-  history.pushState = function(...args) {
-    originalPushState.apply(this, args);
-    log('pushState detected');
-    resetUserInteraction(); // Reset on navigation
-    lastNavigationTime = Date.now();
-    handlePageChange();
-  };
-
-  history.replaceState = function(...args) {
-    originalReplaceState.apply(this, args);
-    log('replaceState detected');
-    resetUserInteraction(); // Reset on navigation
-    lastNavigationTime = Date.now();
-    handlePageChange();
-  };
-
-  // Listen for popstate (back/forward buttons)
+  // Listen for popstate (back/forward buttons) for instant updates
   window.addEventListener('popstate', () => {
-    log('popstate detected');
-    resetUserInteraction(); // Reset on navigation
-    lastNavigationTime = Date.now();
-    handlePageChange();
+    if (window.location.href !== lastUrl) {
+      lastUrl = window.location.href;
+      log('popstate detected');
+      debouncedHandlePageChange();
+    }
   });
 
   log('Initialization complete');
@@ -566,4 +623,3 @@ if (document.readyState === 'loading') {
 } else {
   initialize();
 }
-

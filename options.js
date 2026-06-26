@@ -19,7 +19,9 @@
 
 // Default settings
 const DEFAULT_SETTINGS = {
-  defaultTab: '1' // Tab index 1 (Following tab by default)
+  defaultTab: '1',            // Tab index 1 (Following tab by default)
+  enabled: true,              // Extension enabled by default
+  followingTabSort: 'recent'  // 'recent' (chronological), 'popular' (algorithmic), or 'default' (müdahale etme)
 };
 
 /**
@@ -51,12 +53,17 @@ async function saveSettings(settings) {
 /**
  * Show status message
  */
+let statusTimeout = null;
 function showStatus(message, isSuccess = true) {
   const statusElement = document.getElementById('statusMessage');
   statusElement.textContent = message;
   statusElement.className = `status-message show ${isSuccess ? 'success' : 'error'}`;
 
-  setTimeout(() => {
+  if (statusTimeout) {
+    clearTimeout(statusTimeout);
+  }
+
+  statusTimeout = setTimeout(() => {
     statusElement.classList.remove('show');
   }, 3000);
 }
@@ -86,23 +93,10 @@ async function getTabInfoFromPage() {
 
         const tabs = tabList.querySelectorAll('[role="tab"]');
         const names = Array.from(tabs).map(tab => {
-          // Structure: div[role="tab"] > div > div[dir="ltr"] > span
-          // Get the first div inside the tab
-          const firstDiv = tab.querySelector('div');
-          if (!firstDiv) return '';
-
-          // Get the div with dir="ltr" attribute (text container)
-          const textContainer = firstDiv.querySelector('div[dir="ltr"]');
-          if (!textContainer) return '';
-
-          // Get the first span inside (contains the tab name)
-          const span = textContainer.querySelector('span');
-          if (span) {
-            return span.textContent?.trim() || '';
-          }
-
-          return '';
-        }).filter(name => name); // Remove empty names
+          const clone = tab.cloneNode(true);
+          clone.querySelectorAll('svg').forEach(svg => svg.remove());
+          return clone.textContent?.trim() || '';
+        }).filter(name => name);
 
         return { count: tabs.length || 2, names: names.length > 0 ? names : ['For You', 'Following'] };
       }
@@ -156,10 +150,23 @@ async function populateDropdown(tabInfo, selectedValue) {
  * Initialize the options page
  */
 async function initialize() {
+  const enabledToggle = document.getElementById('enabledToggle');
+  const sortOrderSelect = document.getElementById('sortOrderSelect');
+  const sortOrderGroup = document.getElementById('sortOrderGroup');
   const selectElement = document.getElementById('defaultTabSelect');
 
   // Load current settings
   const settings = await loadSettings();
+
+  // Initialize UI controls
+  enabledToggle.checked = settings.enabled;
+  sortOrderSelect.value = settings.followingTabSort;
+  selectElement.disabled = !settings.enabled;
+  sortOrderSelect.disabled = !settings.enabled;
+
+  if (!settings.enabled) {
+    sortOrderGroup.classList.add('disabled');
+  }
 
   // Get tab info from any open Twitter tab
   const tabInfo = await getTabInfoFromPage();
@@ -167,10 +174,24 @@ async function initialize() {
   // Populate dropdown dynamically
   await populateDropdown(tabInfo, settings.defaultTab);
 
+  // Toggle enabled change
+  enabledToggle.addEventListener('change', () => {
+    const isEnabled = enabledToggle.checked;
+    selectElement.disabled = !isEnabled;
+    sortOrderSelect.disabled = !isEnabled;
+    if (isEnabled) {
+      sortOrderGroup.classList.remove('disabled');
+    } else {
+      sortOrderGroup.classList.add('disabled');
+    }
+  });
+
   // Setup save button
   document.getElementById('saveBtn').addEventListener('click', async () => {
     const settings = {
-      defaultTab: selectElement.value
+      defaultTab: selectElement.value,
+      enabled: enabledToggle.checked,
+      followingTabSort: sortOrderSelect.value
     };
 
     const success = await saveSettings(settings);
@@ -185,6 +206,11 @@ async function initialize() {
   document.getElementById('resetBtn').addEventListener('click', async () => {
     const success = await saveSettings(DEFAULT_SETTINGS);
     if (success) {
+      enabledToggle.checked = DEFAULT_SETTINGS.enabled;
+      sortOrderSelect.value = DEFAULT_SETTINGS.followingTabSort;
+      selectElement.disabled = !DEFAULT_SETTINGS.enabled;
+      sortOrderSelect.disabled = !DEFAULT_SETTINGS.enabled;
+      sortOrderGroup.classList.remove('disabled');
       selectElement.value = DEFAULT_SETTINGS.defaultTab;
       showStatus('✓ Settings reset to default!', true);
     } else {
@@ -199,6 +225,28 @@ async function initialize() {
       getTabInfoFromPage().then(info => populateDropdown(info, selectElement.value));
     }
   });
+
+  // Real-time synchronization: sync UI if settings change from popup
+  chrome.storage.onChanged.addListener((changes, namespace) => {
+    if (namespace === 'sync') {
+      if (changes.enabled) {
+        enabledToggle.checked = changes.enabled.newValue;
+        selectElement.disabled = !changes.enabled.newValue;
+        sortOrderSelect.disabled = !changes.enabled.newValue;
+        if (changes.enabled.newValue) {
+          sortOrderGroup.classList.remove('disabled');
+        } else {
+          sortOrderGroup.classList.add('disabled');
+        }
+      }
+      if (changes.followingTabSort) {
+        sortOrderSelect.value = changes.followingTabSort.newValue;
+      }
+      if (changes.defaultTab) {
+        selectElement.value = changes.defaultTab.newValue;
+      }
+    }
+  });
 }
 
 // Initialize when DOM is ready
@@ -207,4 +255,3 @@ if (document.readyState === 'loading') {
 } else {
   initialize();
 }
-

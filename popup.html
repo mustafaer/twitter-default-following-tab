@@ -4,7 +4,23 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Twitter Default Tab</title>
+  <!-- Load Inter font from Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --bg-primary: rgba(21, 32, 43, 0.85);
+      --bg-card: rgba(30, 39, 50, 0.6);
+      --border-color: rgba(47, 51, 54, 0.6);
+      --text-main: #e7e9ea;
+      --text-muted: #71767b;
+      --twitter-blue: #1d9bf0;
+      --twitter-blue-glow: rgba(29, 155, 240, 0.25);
+      --success-green: #00ba7c;
+      --success-green-glow: rgba(0, 186, 124, 0.2);
+    }
+
     * {
       margin: 0;
       padding: 0;
@@ -13,10 +29,24 @@
 
     body {
       width: 320px;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       padding: 16px;
-      background: #15202b;
-      color: #e7e9ea;
+      background: #15202b; /* Fallback for browsers that don't support backdrop-filter */
+      background-image: radial-gradient(circle at top right, rgba(29, 155, 240, 0.15), transparent 60%);
+      color: var(--text-main);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Glassmorphism Container */
+    .glass-container {
+      background: var(--bg-primary);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
     }
 
     .header {
@@ -24,13 +54,19 @@
       align-items: center;
       gap: 12px;
       margin-bottom: 16px;
-      padding-bottom: 16px;
-      border-bottom: 1px solid #2f3336;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border-color);
     }
 
     .logo {
-      width: 32px;
-      height: 32px;
+      width: 28px;
+      height: 28px;
+      filter: drop-shadow(0 0 6px var(--twitter-blue-glow));
+      transition: transform 0.3s ease;
+    }
+
+    .logo:hover {
+      transform: rotate(10deg) scale(1.1);
     }
 
     .title {
@@ -38,133 +74,310 @@
     }
 
     h1 {
-      font-size: 16px;
-      font-weight: 600;
-      color: #e7e9ea;
-      margin-bottom: 2px;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: -0.2px;
+      color: var(--text-main);
+      margin-bottom: 1px;
     }
 
     .version {
-      font-size: 12px;
-      color: #71767b;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-muted);
     }
 
-    .setting {
-      margin-bottom: 16px;
+    /* Toggle Switch Style */
+    .toggle-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 14px;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .toggle-container:hover {
+      border-color: var(--twitter-blue);
+      box-shadow: 0 0 8px var(--twitter-blue-glow);
+    }
+
+    .toggle-container.disabled,
+    .setting-group.disabled {
+      opacity: 0.5;
+      pointer-events: none;
+      border-color: var(--border-color) !important;
+      box-shadow: none !important;
     }
 
     .setting-label {
       font-size: 13px;
       font-weight: 600;
-      color: #e7e9ea;
+      color: var(--text-main);
+    }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 44px;
+      height: 24px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #273340;
+      transition: .3s cubic-bezier(0.4, 0, 0.2, 1);
+      border-radius: 34px;
+      border: 1px solid var(--border-color);
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 16px;
+      width: 16px;
+      left: 3px;
+      bottom: 3px;
+      background-color: var(--text-main);
+      transition: .3s cubic-bezier(0.4, 0, 0.2, 1);
+      border-radius: 50%;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+    }
+
+    input:checked + .slider {
+      background-color: var(--twitter-blue);
+      border-color: var(--twitter-blue);
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(20px);
+      background-color: #fff;
+    }
+
+    /* Dropdown Section */
+    .setting-group {
+      margin-bottom: 16px;
+    }
+
+    .setting-group-label {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
       margin-bottom: 8px;
       display: block;
+      padding-left: 2px;
+    }
+
+    .select-wrapper {
+      position: relative;
+      width: 100%;
     }
 
     select {
       width: 100%;
-      padding: 10px 12px;
-      border: 1px solid #2f3336;
-      border-radius: 8px;
+      padding: 10px 36px 10px 12px;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
       font-size: 13px;
-      color: #e7e9ea;
-      background-color: #1e2732;
+      font-weight: 500;
+      color: var(--text-main);
+      background-color: var(--bg-card);
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
       font-family: inherit;
+      -webkit-appearance: none;
+      appearance: none;
     }
 
-    select:hover {
-      border-color: #1d9bf0;
-      background-color: #273340;
+    select:hover:not(:disabled) {
+      border-color: var(--twitter-blue);
+      background-color: rgba(39, 51, 64, 0.8);
+      box-shadow: 0 0 8px var(--twitter-blue-glow);
     }
 
     select:focus {
       outline: none;
-      border-color: #1d9bf0;
-      box-shadow: 0 0 0 2px rgba(29, 155, 240, 0.2);
+      border-color: var(--twitter-blue);
+      box-shadow: 0 0 0 2px var(--twitter-blue-glow);
+    }
+
+    select:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      border-color: var(--border-color);
+    }
+
+    /* Custom Arrow */
+    .select-wrapper::after {
+      content: "";
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 8px;
+      height: 5px;
+      background-color: var(--text-muted);
+      clip-path: polygon(100% 0%, 0 0%, 50% 100%);
+      pointer-events: none;
+      transition: transform 0.2s ease, background-color 0.2s ease;
+    }
+
+    .select-wrapper:hover::after {
+      background-color: var(--twitter-blue);
     }
 
     option {
       background-color: #1e2732;
-      color: #e7e9ea;
+      color: var(--text-main);
+      padding: 8px;
     }
 
+    /* Status Banner */
     .status {
       padding: 8px 12px;
-      border-radius: 6px;
+      border-radius: 8px;
       font-size: 12px;
+      font-weight: 600;
       text-align: center;
       margin-bottom: 12px;
+      height: 0;
+      padding-top: 0;
+      padding-bottom: 0;
       opacity: 0;
-      transition: opacity 0.3s ease;
+      overflow: hidden;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 1px solid transparent;
     }
 
     .status.show {
+      height: auto;
+      padding: 8px 12px;
       opacity: 1;
+      margin-bottom: 12px;
     }
 
     .status.success {
-      background-color: #00ba7c;
-      color: #ffffff;
+      background-color: var(--success-green-glow);
+      border-color: rgba(0, 186, 124, 0.3);
+      color: #00ba7c;
+      box-shadow: 0 4px 12px rgba(0, 186, 124, 0.1);
     }
 
+    /* Links Footer */
     .links {
       display: flex;
       gap: 8px;
-      margin-top: 12px;
+      margin-top: 14px;
       padding-top: 12px;
-      border-top: 1px solid #2f3336;
+      border-top: 1px solid var(--border-color);
     }
 
     .link-btn {
       flex: 1;
       padding: 8px 12px;
-      border: 1px solid #2f3336;
-      border-radius: 6px;
-      background: #1e2732;
-      color: #71767b;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background: var(--bg-card);
+      color: var(--text-muted);
       font-size: 12px;
+      font-weight: 600;
       cursor: pointer;
       text-decoration: none;
       text-align: center;
-      transition: all 0.2s ease;
-      display: block;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
     }
 
     .link-btn:hover {
-      background-color: #273340;
-      border-color: #1d9bf0;
-      color: #1d9bf0;
+      background-color: rgba(29, 155, 240, 0.08);
+      border-color: var(--twitter-blue);
+      color: var(--twitter-blue);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(29, 155, 240, 0.1);
+    }
+
+    .link-btn:active {
+      transform: translateY(0);
     }
   </style>
 </head>
 <body>
-  <div class="header">
-    <svg class="logo" viewBox="0 0 24 24" fill="#1d9bf0">
-      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-    </svg>
-    <div class="title">
-      <h1>Twitter Default Tab</h1>
-      <div class="version">v2.0.0</div>
+  <div class="glass-container">
+    <div class="header">
+      <svg class="logo" viewBox="0 0 24 24" fill="var(--twitter-blue)">
+        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+      </svg>
+      <div class="title">
+        <h1>Twitter Default Tab</h1>
+        <div class="version">v2.0.1</div>
+      </div>
     </div>
-  </div>
 
-  <div class="status" id="status"></div>
+    <div class="status" id="status"></div>
 
-  <div class="setting">
-    <label class="setting-label" for="defaultTabSelect">Default Tab (by position)</label>
-    <select id="defaultTabSelect" name="defaultTab">
-      <!-- Options will be populated dynamically -->
-    </select>
-  </div>
+    <div class="toggle-container">
+      <span class="setting-label">Extension Status</span>
+      <label class="switch">
+        <input type="checkbox" id="enabledToggle">
+        <span class="slider"></span>
+      </label>
+    </div>
 
-  <div class="links">
-    <a href="#" class="link-btn" id="settingsBtn">⚙️ Settings</a>
-    <a href="https://github.com/mustafaer/twitter-default-following-tab" class="link-btn" target="_blank">⭐ GitHub</a>
+    <div class="setting-group" id="sortOrderGroup">
+      <label class="setting-group-label" for="sortOrderSelect">Following Sort Order</label>
+      <div class="select-wrapper">
+        <select id="sortOrderSelect" name="followingTabSort">
+          <option value="recent">Recent (Chronological)</option>
+          <option value="popular">Popular (Algorithmic)</option>
+          <option value="default">Default (Don't Force)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="setting-group">
+      <label class="setting-group-label" for="defaultTabSelect">Default Tab (by position)</label>
+      <div class="select-wrapper">
+        <select id="defaultTabSelect" name="defaultTab">
+          <!-- Options will be populated dynamically -->
+        </select>
+      </div>
+    </div>
+
+    <div class="links">
+      <a href="#" class="link-btn" id="settingsBtn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/>
+        </svg>
+        Settings
+      </a>
+      <a href="https://github.com/mustafaer/twitter-default-following-tab" class="link-btn" target="_blank">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+        </svg>
+        GitHub
+      </a>
+    </div>
   </div>
 
   <script src="popup.js"></script>
 </body>
 </html>
-

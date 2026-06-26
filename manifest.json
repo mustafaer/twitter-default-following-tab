@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Twitter Default Following Tab",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Auto-switches to Following tab on Twitter/X. Smart detection, zero permissions, privacy-focused. Skip For You feed.",
   "author": "Mustafa ER",
   "homepage_url": "https://github.com/mustafaer/twitter-default-following-tab",
