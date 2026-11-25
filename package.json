@@ -10,6 +10,7 @@
     "validate": "node scripts/validate.js",
     "build": "bash scripts/build.sh",
     "icons": "bash scripts/icons.sh",
+    "store-images": "node scripts/store-images.js",
     "check": "npm run lint && npm test && npm run build"
   },
   "engines": {
