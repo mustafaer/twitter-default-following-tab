@@ -3,7 +3,7 @@
 All notable changes to this extension are listed here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
-## [2.1.0] - Unreleased
+## [2.1.0] - 2026-11-25
 
 A reliability, privacy and polish release. Settings from 2.0.x carry over automatically.
 
@@ -80,7 +80,7 @@ A reliability, privacy and polish release. Settings from 2.0.x carry over automa
 
 - First release: switches to the Following tab automatically, in any language.
 
-[2.1.0]: https://github.com/mustafaer/twitter-default-following-tab/compare/v2.0.0...HEAD
+[2.1.0]: https://github.com/mustafaer/twitter-default-following-tab/compare/v2.0.0...v2.1.0
 [2.0.1]: https://github.com/mustafaer/twitter-default-following-tab/commit/2e08277
 [2.0.0]: https://github.com/mustafaer/twitter-default-following-tab/compare/v1.1.0...v2.0.0
 [1.1.0]: https://github.com/mustafaer/twitter-default-following-tab/compare/v1.0.0...v1.1.0
