@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- Source for src/icons/*.png. Rebuild with: npm run icons -->
+  <defs>
+    <linearGradient id="tile" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2ea8f6"/>
+      <stop offset="1" stop-color="#0a6cb0"/>
+    </linearGradient>
+    <clipPath id="baseline">
+      <rect x="0" y="0" width="128" height="100"/>
+    </clipPath>
+  </defs>
+  <rect x="6" y="6" width="116" height="116" rx="28" fill="url(#tile)"/>
+  <g clip-path="url(#baseline)">
+    <!-- the person you follow, behind -->
+    <g fill="#ffffff" fill-opacity="0.6">
+      <circle cx="63" cy="42" r="13"/>
+      <path d="M36 100c0-19 12-32 27-32s27 13 27 32z"/>
+    </g>
+    <!-- you, in front -->
+    <g fill="#ffffff" stroke="#1683cc" stroke-width="5" paint-order="stroke">
+      <circle cx="45" cy="54" r="14"/>
+      <path d="M18 100c0-17.5 12-30 27-30s27 12.5 27 30z"/>
+    </g>
+  </g>
+  <!-- arrow: straight to the Following timeline -->
+  <path d="M82 80h23M94 68l12 12-12 12" fill="none" stroke="#ffffff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

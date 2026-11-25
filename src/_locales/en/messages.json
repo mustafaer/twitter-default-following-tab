@@ -1,0 +1,142 @@
+{
+  "extName": {
+    "message": "Twitter Default Following Tab",
+    "description": "Extension name. Keep it in English: it is the product name."
+  },
+  "extDescription": {
+    "message": "Opens the Following tab on X (Twitter) automatically, sorted by Recent or Popular. No tracking, no data collection.",
+    "description": "Chrome Web Store and chrome://extensions description. At most 132 characters."
+  },
+  "actionTitle": {
+    "message": "Twitter Default Following Tab settings",
+    "description": "Tooltip of the toolbar button."
+  },
+  "versionLabel": {
+    "message": "Version $1",
+    "description": "$1 is the version number, such as 2.1.0."
+  },
+  "enabledLabel": {
+    "message": "Auto-switch",
+    "description": "On/off switch for the whole extension."
+  },
+  "enabledDescription": {
+    "message": "Open your chosen tab every time you visit the X home page.",
+    "description": "Explains the on/off switch."
+  },
+  "defaultTabLabel": {
+    "message": "Open on",
+    "description": "Label of the list of home tabs to open by default."
+  },
+  "defaultTabDescription": {
+    "message": "Tabs are matched by their position, so this works in every language.",
+    "description": "Explains the default tab list."
+  },
+  "tabOption": {
+    "message": "$1. $2",
+    "description": "One entry in the tab list. $1 is the position (1, 2, 3…), $2 the tab name."
+  },
+  "tabForYou": {
+    "message": "For you",
+    "description": "Name of X's first home tab, shown until the real names are known."
+  },
+  "tabFollowing": {
+    "message": "Following",
+    "description": "Name of X's second home tab, shown until the real names are known."
+  },
+  "tabPinned": {
+    "message": "Pinned tab",
+    "description": "Placeholder name for a pinned list or community tab."
+  },
+  "tabMissing": {
+    "message": "$1. Not on your home page right now",
+    "description": "A saved tab position that X does not show at the moment. $1 is the position."
+  },
+  "tabsUnknownHint": {
+    "message": "Visit x.com/home once to list your pinned lists and communities here.",
+    "description": "Shown when the extension has not seen the home tabs yet."
+  },
+  "sortLabel": {
+    "message": "Following sort",
+    "description": "Label of the sort order list for the Following timeline."
+  },
+  "sortDescription": {
+    "message": "How the Following timeline is sorted when it opens.",
+    "description": "Explains the sort order list."
+  },
+  "sortRecent": {
+    "message": "Recent: newest first",
+    "description": "Sort option matching X's Recent order."
+  },
+  "sortPopular": {
+    "message": "Popular: X's ranking",
+    "description": "Sort option matching X's Popular order."
+  },
+  "sortKeep": {
+    "message": "Leave as it is",
+    "description": "Sort option that does not change X's current order."
+  },
+  "sortOnlyFollowing": {
+    "message": "Only used when the default tab is Following.",
+    "description": "Shown when another default tab is chosen."
+  },
+  "openSettings": {
+    "message": "Settings",
+    "description": "Button in the popup that opens the settings page."
+  },
+  "sourceCode": {
+    "message": "Source code",
+    "description": "Link to the GitHub repository."
+  },
+  "statusSaved": {
+    "message": "Saved",
+    "description": "Confirmation after a setting changes."
+  },
+  "statusReset": {
+    "message": "Defaults restored",
+    "description": "Confirmation after restoring the default settings."
+  },
+  "statusError": {
+    "message": "Couldn't save. Please try again.",
+    "description": "Shown when saving a setting fails."
+  },
+  "optionsTitle": {
+    "message": "Settings",
+    "description": "Heading of the settings page."
+  },
+  "optionsSubtitle": {
+    "message": "Choose which tab the X home page opens on.",
+    "description": "Subheading of the settings page."
+  },
+  "resetButton": {
+    "message": "Restore defaults",
+    "description": "Button that restores the default settings."
+  },
+  "aboutTitle": {
+    "message": "Good to know",
+    "description": "Heading above short notes on how the extension behaves."
+  },
+  "aboutManual": {
+    "message": "If you switch tabs yourself, your choice stays until you reload the page.",
+    "description": "Note on manual tab changes."
+  },
+  "aboutNoFlash": {
+    "message": "While the tab switches, the timeline is hidden for a moment, so you never see the wrong feed.",
+    "description": "Note on the hidden transition."
+  },
+  "aboutPrivate": {
+    "message": "Your settings stay in your browser and sync through Chrome if sync is on. Tab names stay on this device. Nothing is sent anywhere.",
+    "description": "Privacy summary."
+  },
+  "privacyPolicy": {
+    "message": "Privacy policy",
+    "description": "Link to the privacy policy."
+  },
+  "reportProblem": {
+    "message": "Report a problem",
+    "description": "Link to open a GitHub issue."
+  },
+  "disclaimer": {
+    "message": "Not affiliated with or endorsed by X Corp.",
+    "description": "Trademark disclaimer."
+  }
+}

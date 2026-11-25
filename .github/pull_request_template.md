@@ -1,53 +1,24 @@
-# Description
+## What does this change?
 
-Please include a summary of the changes and which issue is fixed (if applicable).
-
-Fixes # (issue)
+A short summary, and the issue it fixes, if any: Fixes #
 
 ## Type of change
 
-Please delete options that are not relevant.
+- [ ] Bug fix
+- [ ] New feature
+- [ ] Translation
+- [ ] Documentation
+- [ ] Refactoring or tooling
 
-- [ ] Bug fix (non-breaking change which fixes an issue)
-- [ ] New feature (non-breaking change which adds functionality)
-- [ ] Breaking change (fix or feature that would cause existing functionality to not work as expected)
-- [ ] Documentation update
-- [ ] Performance improvement
-- [ ] Code refactoring
+## Checks
 
-## How Has This Been Tested?
+- [ ] `npm run lint`, `npm test` and `npm run build` pass
+- [ ] New or changed behaviour has a test
+- [ ] Tried on x.com: fresh load, navigating away and back, back/forward buttons
+- [ ] Tried with a slow connection (DevTools → Network)
+- [ ] `CHANGELOG.md` updated under "Unreleased"
+- [ ] No new permissions or network requests (or `PRIVACY_POLICY.md` updated to match)
 
-Please describe the tests that you ran to verify your changes.
+## Screenshots
 
-- [ ] Normal page load
-- [ ] Fast network
-- [ ] Slow network (Slow 3G in DevTools)
-- [ ] Navigation (home → profile → home)
-- [ ] Back/forward buttons
-- [ ] Page refresh
-- [ ] Multiple tabs
-- [ ] Debug mode enabled
-
-**Test Configuration**:
-* Browser version:
-* Operating System:
-
-## Checklist:
-
-- [ ] My code follows the style guidelines of this project
-- [ ] I have performed a self-review of my own code
-- [ ] I have commented my code, particularly in hard-to-understand areas
-- [ ] I have made corresponding changes to the documentation
-- [ ] My changes generate no new warnings or errors
-- [ ] I have tested on both fast and slow network conditions
-- [ ] I have checked browser console for errors
-- [ ] I have updated the CHANGELOG.md (if applicable)
-
-## Screenshots (if applicable):
-
-Add screenshots to help reviewers understand your changes.
-
-## Additional context:
-
-Add any other context about the pull request here.
-
+For changes to the popup or settings page, light and dark mode.

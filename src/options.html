@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Twitter Default Following Tab</title>
+  <link rel="stylesheet" href="ui/ui.css">
+  <style>
+    body {
+      min-height: 100vh;
+      padding: 48px 20px;
+    }
+
+    .page {
+      max-width: 620px;
+      margin: 0 auto;
+      display: grid;
+      gap: 20px;
+    }
+
+    .header h1 {
+      font-size: 22px;
+    }
+
+    .card {
+      display: grid;
+      gap: 24px;
+      padding: 24px;
+    }
+
+    .section-title {
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .field .description {
+      margin-top: -2px;
+    }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding-top: 18px;
+      border-top: 1px solid var(--border);
+    }
+
+    .notes {
+      display: grid;
+      gap: 10px;
+      margin: 12px 0 0;
+      padding-left: 20px;
+      color: var(--muted);
+    }
+
+    .footer {
+      display: grid;
+      gap: 6px;
+      text-align: center;
+    }
+
+    .footer nav {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 6px 16px;
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 24px 12px;
+      }
+
+      .card {
+        padding: 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="header">
+      <img class="logo" src="icons/icon48.png" width="48" height="48" alt="">
+      <div>
+        <h1 data-i18n="extName">Twitter Default Following Tab</h1>
+        <p class="muted" data-i18n="optionsSubtitle">Choose which tab the X home page opens on.</p>
+      </div>
+    </header>
+
+    <main class="card" aria-labelledby="settingsTitle">
+      <h2 class="visually-hidden" id="settingsTitle" data-i18n="optionsTitle">Settings</h2>
+
+      <div class="row">
+        <div>
+          <label class="label" for="enabledToggle" data-i18n="enabledLabel">Auto-switch</label>
+          <p class="muted small" id="enabledDescription" data-i18n="enabledDescription">Open your chosen tab every time you visit the X home page.</p>
+        </div>
+        <span class="switch">
+          <input type="checkbox" id="enabledToggle" role="switch" aria-describedby="enabledDescription">
+          <span class="switch-track" aria-hidden="true"></span>
+        </span>
+      </div>
+
+      <div class="field" data-requires-enabled>
+        <label class="label" for="defaultTabSelect" data-i18n="defaultTabLabel">Open on</label>
+        <p class="muted small description" id="defaultTabDescription" data-i18n="defaultTabDescription">Tabs are matched by their position, so this works in every language.</p>
+        <div class="select">
+          <select id="defaultTabSelect" aria-describedby="defaultTabDescription tabsHint"></select>
+        </div>
+        <p class="muted small" id="tabsHint" data-i18n="tabsUnknownHint" hidden>Visit x.com/home once to list your pinned lists and communities here.</p>
+      </div>
+
+      <div class="field" data-requires-enabled>
+        <label class="label" for="sortOrderSelect" data-i18n="sortLabel">Following sort</label>
+        <p class="muted small description" id="sortDescription" data-i18n="sortDescription">How the Following timeline is sorted when it opens.</p>
+        <div class="select">
+          <select id="sortOrderSelect" aria-describedby="sortDescription sortHint">
+            <option value="recent" data-i18n="sortRecent">Recent: newest first</option>
+            <option value="popular" data-i18n="sortPopular">Popular: X's ranking</option>
+            <option value="default" data-i18n="sortKeep">Leave as it is</option>
+          </select>
+        </div>
+        <p class="muted small" id="sortHint" data-i18n="sortOnlyFollowing" hidden>Only used when the default tab is Following.</p>
+      </div>
+
+      <div class="actions">
+        <p class="status" id="status" role="status" aria-live="polite"></p>
+        <button type="button" class="button" id="resetButton">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.65 6.35A7.96 7.96 0 0 0 12 4a8 8 0 1 0 7.73 10h-2.08A6 6 0 1 1 12 6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+          <span data-i18n="resetButton">Restore defaults</span>
+        </button>
+      </div>
+    </main>
+
+    <section class="card" aria-labelledby="aboutTitle">
+      <div>
+        <h2 class="section-title" id="aboutTitle" data-i18n="aboutTitle">Good to know</h2>
+        <ul class="notes">
+          <li data-i18n="aboutManual">If you switch tabs yourself, your choice stays until you reload the page.</li>
+          <li data-i18n="aboutNoFlash">While the tab switches, the timeline is hidden for a moment, so you never see the wrong feed.</li>
+          <li data-i18n="aboutPrivate">Your settings stay in your browser and sync through Chrome if sync is on. Tab names stay on this device. Nothing is sent anywhere.</li>
+        </ul>
+      </div>
+    </section>
+
+    <footer class="footer muted small">
+      <nav>
+        <a href="https://github.com/mustafaer/twitter-default-following-tab" target="_blank" rel="noopener noreferrer" data-i18n="sourceCode">Source code</a>
+        <a href="https://github.com/mustafaer/twitter-default-following-tab/blob/HEAD/PRIVACY_POLICY.md" target="_blank" rel="noopener noreferrer" data-i18n="privacyPolicy">Privacy policy</a>
+        <a href="https://github.com/mustafaer/twitter-default-following-tab/issues/new/choose" target="_blank" rel="noopener noreferrer" data-i18n="reportProblem">Report a problem</a>
+      </nav>
+      <p id="version"></p>
+      <p data-i18n="disclaimer">Not affiliated with or endorsed by X Corp.</p>
+    </footer>
+  </div>
+
+  <script src="lib/settings.js"></script>
+  <script src="ui/settings-ui.js"></script>
+  <script src="options.js"></script>
+</body>
+</html>

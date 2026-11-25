@@ -1,0 +1,107 @@
+{
+  "extName": {
+    "message": "Twitter Default Following Tab"
+  },
+  "extDescription": {
+    "message": "X'te (Twitter) Takip edilenler sekmesini otomatik açar; En yeni veya Popüler sıralamayla. İzleme ve veri toplama yok."
+  },
+  "actionTitle": {
+    "message": "Twitter Default Following Tab ayarları"
+  },
+  "versionLabel": {
+    "message": "Sürüm $1"
+  },
+  "enabledLabel": {
+    "message": "Otomatik geçiş"
+  },
+  "enabledDescription": {
+    "message": "X ana sayfasını her açtığınızda seçtiğiniz sekmeye geçer."
+  },
+  "defaultTabLabel": {
+    "message": "Açılacak sekme"
+  },
+  "defaultTabDescription": {
+    "message": "Sekmeler sırasına göre seçilir; bu yüzden her dilde çalışır."
+  },
+  "tabOption": {
+    "message": "$1. $2"
+  },
+  "tabForYou": {
+    "message": "Sana özel"
+  },
+  "tabFollowing": {
+    "message": "Takip edilenler"
+  },
+  "tabPinned": {
+    "message": "Sabitlenmiş sekme"
+  },
+  "tabMissing": {
+    "message": "$1. Şu an ana sayfanızda yok"
+  },
+  "tabsUnknownHint": {
+    "message": "Sabitlediğiniz listeleri ve toplulukları burada görmek için x.com/home sayfasını bir kez açın."
+  },
+  "sortLabel": {
+    "message": "Takip edilenler sıralaması"
+  },
+  "sortDescription": {
+    "message": "Takip edilenler zaman akışı açıldığında nasıl sıralanacağı."
+  },
+  "sortRecent": {
+    "message": "En yeni: önce yeni gönderiler"
+  },
+  "sortPopular": {
+    "message": "Popüler: X'in sıralaması"
+  },
+  "sortKeep": {
+    "message": "Olduğu gibi bırak"
+  },
+  "sortOnlyFollowing": {
+    "message": "Yalnızca varsayılan sekme Takip edilenler olduğunda kullanılır."
+  },
+  "openSettings": {
+    "message": "Ayarlar"
+  },
+  "sourceCode": {
+    "message": "Kaynak kodu"
+  },
+  "statusSaved": {
+    "message": "Kaydedildi"
+  },
+  "statusReset": {
+    "message": "Varsayılanlar geri yüklendi"
+  },
+  "statusError": {
+    "message": "Kaydedilemedi. Lütfen tekrar deneyin."
+  },
+  "optionsTitle": {
+    "message": "Ayarlar"
+  },
+  "optionsSubtitle": {
+    "message": "X ana sayfasının hangi sekmede açılacağını seçin."
+  },
+  "resetButton": {
+    "message": "Varsayılanlara dön"
+  },
+  "aboutTitle": {
+    "message": "Bilmeniz gerekenler"
+  },
+  "aboutManual": {
+    "message": "Sekmeyi kendiniz değiştirirseniz, sayfayı yenileyene kadar seçiminiz korunur."
+  },
+  "aboutNoFlash": {
+    "message": "Sekme değişirken zaman akışı kısa bir an gizlenir; böylece yanlış akışı hiç görmezsiniz."
+  },
+  "aboutPrivate": {
+    "message": "Ayarlarınız tarayıcınızda kalır, Chrome eşitlemesi açıksa eşitlenir. Sekme adları yalnızca bu cihazda tutulur. Hiçbir yere veri gönderilmez."
+  },
+  "privacyPolicy": {
+    "message": "Gizlilik politikası"
+  },
+  "reportProblem": {
+    "message": "Sorun bildir"
+  },
+  "disclaimer": {
+    "message": "X Corp. ile bağlantılı değildir ve X Corp. tarafından onaylanmamıştır."
+  }
+}

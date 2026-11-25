@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Twitter Default Following Tab</title>
+  <link rel="stylesheet" href="ui/ui.css">
+  <style>
+    body {
+      width: 320px;
+      padding: 12px;
+    }
+
+    .card {
+      display: grid;
+      gap: 16px;
+      padding: 16px;
+    }
+
+    .header {
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .links {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+    }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <header class="header">
+      <img class="logo" src="icons/icon48.png" width="32" height="32" alt="">
+      <div>
+        <h1 data-i18n="extName">Twitter Default Following Tab</h1>
+        <div class="meta small">
+          <p class="status" id="status" role="status" aria-live="polite"></p>
+          <p class="muted version" id="version"></p>
+        </div>
+      </div>
+    </header>
+
+    <div class="row">
+      <div>
+        <label class="label" for="enabledToggle" data-i18n="enabledLabel">Auto-switch</label>
+        <p class="muted small" id="enabledDescription" data-i18n="enabledDescription">Open your chosen tab every time you visit the X home page.</p>
+      </div>
+      <span class="switch">
+        <input type="checkbox" id="enabledToggle" role="switch" aria-describedby="enabledDescription">
+        <span class="switch-track" aria-hidden="true"></span>
+      </span>
+    </div>
+
+    <div class="field" data-requires-enabled>
+      <label class="label" for="defaultTabSelect" data-i18n="defaultTabLabel">Open on</label>
+      <div class="select">
+        <select id="defaultTabSelect" aria-describedby="tabsHint"></select>
+      </div>
+      <p class="muted small" id="tabsHint" data-i18n="tabsUnknownHint" hidden>Visit x.com/home once to list your pinned lists and communities here.</p>
+    </div>
+
+    <div class="field" data-requires-enabled>
+      <label class="label" for="sortOrderSelect" data-i18n="sortLabel">Following sort</label>
+      <div class="select">
+        <select id="sortOrderSelect" aria-describedby="sortHint">
+          <option value="recent" data-i18n="sortRecent">Recent: newest first</option>
+          <option value="popular" data-i18n="sortPopular">Popular: X's ranking</option>
+          <option value="default" data-i18n="sortKeep">Leave as it is</option>
+        </select>
+      </div>
+      <p class="muted small" id="sortHint" data-i18n="sortOnlyFollowing" hidden>Only used when the default tab is Following.</p>
+    </div>
+
+    <nav class="links">
+      <button type="button" class="button" id="openOptions">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65a.5.5 0 0 0 .12-.64l-2-3.46a.5.5 0 0 0-.61-.22l-2.49 1a7.3 7.3 0 0 0-1.69-.98l-.38-2.65A.49.49 0 0 0 14 2h-4a.49.49 0 0 0-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1a.5.5 0 0 0-.61.22l-2 3.46a.49.49 0 0 0 .12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65a.5.5 0 0 0-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46a.5.5 0 0 0-.12-.64zM12 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z"/></svg>
+        <span data-i18n="openSettings">Settings</span>
+      </button>
+      <a class="button" href="https://github.com/mustafaer/twitter-default-following-tab" target="_blank" rel="noopener noreferrer">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2.2c-3.3.7-4-1.4-4-1.4-.6-1.4-1.4-1.8-1.4-1.8-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1.1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0c2.3-1.6 3.3-1.2 3.3-1.2.7 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg>
+        <span data-i18n="sourceCode">Source code</span>
+      </a>
+    </nav>
+  </main>
+
+  <script src="lib/settings.js"></script>
+  <script src="ui/settings-ui.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

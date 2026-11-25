@@ -1,0 +1,27 @@
+/*
+ * Twitter Default Following Tab: styles injected into x.com / twitter.com.
+ * They only take effect while the content script sets one of these classes on <html>.
+ */
+
+/* While the chosen tab is opening, hide the timeline (the tabs themselves stay visible). */
+html.tdft-hide-timeline [data-testid="primaryColumn"] section[role="region"] {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* Fade the timeline back in. */
+html.tdft-fade-in [data-testid="primaryColumn"] section[role="region"] {
+  transition: opacity 150ms ease-out;
+}
+
+/* The Following sort menu is opened and closed by the extension without being seen. */
+html.tdft-sorting #layers [role="menu"] {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.tdft-fade-in [data-testid="primaryColumn"] section[role="region"] {
+    transition: none;
+  }
+}

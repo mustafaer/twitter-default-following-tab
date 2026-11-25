@@ -1,245 +1,73 @@
-# Contributing to Twitter Default Following Tab
+# Contributing
 
-First off, thank you for considering contributing to Twitter Default Following Tab! It's people like you that make this extension better for everyone.
+Thank you for helping improve Twitter Default Following Tab. Bug reports, translations and code are all welcome.
 
-## 🤝 Code of Conduct
+## Reporting a bug
 
-This project and everyone participating in it is governed by basic principles of respect and collaboration. By participating, you are expected to uphold these principles.
+Check the [existing issues](https://github.com/mustafaer/twitter-default-following-tab/issues) first, then [open a new one](https://github.com/mustafaer/twitter-default-following-tab/issues/new/choose). The most useful reports include:
 
-## 🐛 How Can I Contribute?
+- your browser and its version, and the extension version (shown in the popup);
+- your settings (default tab and Following sort) and X's display language;
+- what you expected and what happened, with steps to reproduce;
+- debug logs: in an X tab's DevTools console run `localStorage.setItem('tdft:debug', '1')`, reload, reproduce, then copy the lines that start with `[Default Following Tab]`.
 
-### Reporting Bugs
+## Setting up
 
-Before creating bug reports, please check existing issues to avoid duplicates. When you create a bug report, include as many details as possible:
+You need Node.js 22 or newer and a Chromium browser.
 
-**Bug Report Template:**
-```markdown
-**Describe the bug**
-A clear description of what the bug is.
-
-**To Reproduce**
-Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '...'
-3. See error
-
-**Expected behavior**
-What you expected to happen.
-
-**Screenshots**
-If applicable, add screenshots.
-
-**Environment:**
- - Browser: [e.g. Chrome 120]
- - OS: [e.g. macOS 14.0]
- - Extension Version: [e.g. 1.0.0]
+```bash
+git clone https://github.com/mustafaer/twitter-default-following-tab.git
+cd twitter-default-following-tab
+npm ci
 ```
 
-### Suggesting Enhancements
+Load the `src/` folder with **Load unpacked** on `chrome://extensions` (Developer mode on). After a change, click the extension's reload button there and reload the X tab.
 
-Enhancement suggestions are tracked as GitHub issues. Create an issue and provide:
+## Before you open a pull request
 
-- **Clear title** describing the enhancement
-- **Detailed description** of the proposed functionality
-- **Use cases** explaining why this would be useful
-- **Possible implementation** if you have ideas
-
-### Pull Requests
-
-#### Development Process
-
-1. **Fork** the repository
-2. **Clone** your fork locally
-3. **Create a branch** for your changes:
-   ```bash
-   git checkout -b feature/amazing-feature
-   ```
-4. **Make your changes**
-5. **Test thoroughly**
-6. **Commit** with clear messages
-7. **Push** to your fork
-8. **Create a Pull Request**
-
-#### Code Guidelines
-
-**JavaScript Style:**
-```javascript
-// Use clear, descriptive function names
-function checkIfFollowingTabIsActive() { ... }
-
-// Add JSDoc comments for functions
-/**
- * Checks if the Following tab is currently active
- * @returns {boolean} True if Following tab is active
- */
-function isFollowingTabActive() { ... }
-
-// Use constants for magic numbers
-const CONTENT_CHECK_INTERVAL = 50; // ms
-
-// Keep functions focused and small
-// One function = one responsibility
+```bash
+npm run lint
+npm test
+npm run build
 ```
 
-**Code Organization:**
-- Constants at the top
-- Utility functions (log, debounce) together
-- DOM-related functions grouped
-- Initialization at the bottom
+CI runs the same three commands on every pull request.
 
-**Comments:**
-- Explain WHY, not WHAT (code should be self-explanatory)
-- Use JSDoc for function documentation
-- Add inline comments for complex logic only
+Then try the change on x.com itself:
 
-**Performance:**
-- Minimize DOM queries (cache selectors when possible)
-- Use debouncing for frequent events
-- Avoid unnecessary loops
-- Test on slow networks
+- a fresh load of x.com/home, with For you and with Following open beforehand;
+- going to a profile or post and back to Home, with both the links and the back/forward buttons;
+- picking a tab yourself, then navigating away and back;
+- each sort setting (Recent, Popular, Leave as it is);
+- a pinned list or community as the default tab, if you have one;
+- a slow connection (DevTools → Network → Slow 4G or 3G);
+- the popup and settings page in light and dark mode.
 
-#### Testing Checklist
+## Code guidelines
 
-Before submitting a PR, test:
+- **X's page structure belongs in `src/lib/x-page.js` only.** If X changes its markup, that file and the fake page in `tests/helpers/fake-x.js` are what change.
+- **Prefer what X exposes for accessibility** (`role`, `aria-selected`, `aria-haspopup`, `data-testid`) over class names or visible text, so the extension keeps working in every language.
+- **Every wait must be cancellable and bounded.** Use the controller's `waitFor` with the run's `AbortSignal` and a timeout from `DEFAULT_TIMING`. Never leave the timeline hidden without the safety timeout.
+- **Add a test for every behaviour change.** The fake X page lets you reproduce timing problems in `tests/controller.test.js`.
+- **Keep it private.** No network requests, no remote code, no new permissions without updating `PRIVACY_POLICY.md` and `ALLOWED_PERMISSIONS` in `scripts/validate.js`.
+- **User-facing text goes in `src/_locales/*/messages.json`**, with the English wording in the HTML as a fallback.
+- Write clear names and explain *why* in comments. ESLint enforces the rest.
 
-- ✅ Normal page load
-- ✅ Fast network (no throttling)
-- ✅ Slow network (Chrome DevTools → Slow 3G)
-- ✅ Navigation (home → profile → home)
-- ✅ Back/forward buttons
-- ✅ Page refresh (F5)
-- ✅ Multiple tabs open
-- ✅ Debug mode works (console logs)
+## Translations
 
-#### Commit Messages
+Copy `src/_locales/en/messages.json` to `src/_locales/<language code>/messages.json` and translate each `message`. Keep `extName` unchanged, keep `extDescription` within 132 characters, and leave `$1` and `$2` placeholders in place. `npm test` checks that nothing is missing.
 
-Use clear, descriptive commit messages:
+## Commit messages
 
-```
-Good:
-✅ "Add smart content detection for Following tab"
-✅ "Fix transition timing on slow networks"
-✅ "Improve performance by caching tab queries"
+Use a short summary line in the present tense ("Fix sort menu detection in Japanese"), followed by a blank line and any details.
 
-Bad:
-❌ "fix bug"
-❌ "update code"
-❌ "changes"
-```
+## Releasing (maintainers)
 
-Format:
-```
-Short summary (50 chars or less)
+1. Update `version` in `src/manifest.json` and move the changelog's "Unreleased" section under the new version and date.
+2. Update `PRIVACY_POLICY.md` if the stored data or permissions changed.
+3. Run `npm run build` and upload `dist/twitter-default-following-tab-v<version>.zip` to the Chrome Web Store Developer Dashboard.
+4. Tag the release: `git tag v<version>` and push the tag.
 
-More detailed explanation if needed. Wrap at 72 characters.
-Explain the problem this commit solves and how.
+## License
 
-- Bullet points are okay too
-- Use present tense ("Add feature" not "Added feature")
-```
-
-## 📁 Project Structure
-
-```
-twitter-default-following-tab/
-├── content.js          # Main extension logic
-├── manifest.json       # Extension configuration
-├── build.sh           # Build script
-├── icons/             # Extension icons
-│   ├── icon16.png
-│   ├── icon48.png
-│   └── icon128.png
-├── LICENSE            # GNU GPL v3
-└── README.md          # Documentation
-```
-
-## 🔧 Development Setup
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/mustafaer/twitter-default-following-tab.git
-   cd twitter-default-following-tab
-   ```
-
-2. Load in Chrome:
-   - Open `chrome://extensions/`
-   - Enable "Developer mode"
-   - Click "Load unpacked"
-   - Select the project folder
-
-3. Enable debug mode:
-   - Open `content.js`
-   - Change `const DEBUG = false;` to `const DEBUG = true;`
-   - Reload extension
-
-4. Make changes and test
-
-5. Build for distribution:
-   ```bash
-   chmod +x build.sh
-   ./build.sh
-   ```
-
-## 🧪 Testing
-
-### Manual Testing
-
-1. **Basic functionality:**
-   - Open twitter.com
-   - Verify Following tab is active
-   - Check no "For You" content is visible
-
-2. **Network conditions:**
-   - Chrome DevTools → Network tab
-   - Test with: Fast 3G, Slow 3G, Offline
-   - Verify content loads before showing
-
-3. **Navigation:**
-   - Navigate away and back
-   - Use back/forward buttons
-   - Refresh page
-   - All should maintain Following tab
-
-### Debug Console
-
-With DEBUG mode enabled, check console for:
-```
-[Twitter Following Tab] Initializing extension...
-[Twitter Following Tab] Transition started - content hidden
-[Twitter Following Tab] Found Following tab, clicking...
-[Twitter Following Tab] Following content loaded check: true tweets: 15
-[Twitter Following Tab] Following content loaded after 3 attempts
-[Twitter Following Tab] Transition ended - content visible
-```
-
-## 📝 Documentation
-
-When adding features, update:
-
-- **README.md** - User-facing documentation
-- **Code comments** - Developer documentation
-- **JSDoc** - Function documentation
-
-## 🎯 Priority Areas
-
-Current focus areas for contributions:
-
-1. **Performance optimization** - Faster, more efficient code
-2. **Edge case handling** - Unusual scenarios
-3. **Browser compatibility** - Firefox, Safari support
-4. **Accessibility** - Screen readers, keyboard navigation
-5. **Tests** - Automated testing framework
-
-## ❓ Questions?
-
-- Open a [Discussion](https://github.com/mustafaer/twitter-default-following-tab/discussions)
-- Check existing [Issues](https://github.com/mustafaer/twitter-default-following-tab/issues)
-
-## 📜 License
-
-By contributing, you agree that your contributions will be licensed under the GNU General Public License v3.0.
-
----
-
-Thank you for contributing! 🎉
-
+By contributing you agree that your work is licensed under the [GNU General Public License v3.0 or later](LICENSE).

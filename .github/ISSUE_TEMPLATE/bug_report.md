@@ -1,39 +1,34 @@
 ---
-name: Bug Report
-about: Create a report to help us improve
+name: Bug report
+about: Something does not work as expected
 title: '[BUG] '
 labels: bug
 assignees: ''
 ---
 
-**Describe the bug**
-A clear and concise description of what the bug is.
+**What happened?**
+A clear description of the problem.
 
-**To Reproduce**
-Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '...'
-3. Scroll down to '...'
-4. See error
+**Steps to reproduce**
+1. Open '...'
+2. Click '...'
+3. See '...'
 
-**Expected behavior**
-A clear and concise description of what you expected to happen.
+**What did you expect?**
+
+**Your setup**
+- Extension version (shown in the popup): [e.g. 2.1.0]
+- Browser and version: [e.g. Chrome 142]
+- Operating system: [e.g. macOS 26, Windows 11]
+- Settings: default tab [e.g. 2. Following], Following sort [e.g. Recent]
+- X display language: [e.g. English]
+
+**Debug log**
+In the X tab's DevTools console, run `localStorage.setItem('tdft:debug', '1')`, reload the page, reproduce the problem, and paste the lines that start with `[Default Following Tab]`:
+
+```
+paste the log here
+```
 
 **Screenshots**
-If applicable, add screenshots to help explain your problem.
-
-**Environment:**
- - Browser: [e.g. Chrome 120, Edge 118]
- - OS: [e.g. Windows 11, macOS 14.0]
- - Extension Version: [e.g. 1.0.0]
- - Network Speed: [e.g. fast, slow, 3G]
-
-**Console Logs**
-If possible, enable debug mode and paste relevant console logs:
-```
-[Paste console logs here]
-```
-
-**Additional context**
-Add any other context about the problem here.
-
+If they help explain the problem.
