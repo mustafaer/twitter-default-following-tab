@@ -57,6 +57,15 @@ The extension has no background script and does not use the `tabs`, `scripting`,
 - **Restore defaults** with the button on the settings page.
 - **Delete everything**: uninstalling the extension removes all of its stored data from your browser. Chrome may keep the synced settings in your Google account until sync catches up; you can clear synced data in your Google account settings.
 
+## Earlier versions
+
+Version 2.0.0 stored only the default tab position, and version 2.0.1 stored the same three settings as 2.1.0, both in `chrome.storage.sync`. Neither kept tab names. When you opened their popup or settings page:
+
+- they used the `scripting` and `activeTab` permissions to read the names of the tabs on an open X page, without storing them;
+- version 2.0.1 also loaded the Inter font from Google Fonts, a request to Google's servers that, like any web request, includes your IP address.
+
+Version 2.1.0 removes both. Chrome updates the extension automatically.
+
 ## Children
 
 The extension does not collect personal information from anyone, including children.
