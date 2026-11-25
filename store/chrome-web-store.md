@@ -103,13 +103,27 @@ Soru ve sorunlar için: https://github.com/mustafaer/twitter-default-following-t
 X Corp. ile bağlantılı değildir ve X Corp. tarafından onaylanmamıştır. "X" ve "Twitter", sahiplerinin ticari markalarıdır.
 ```
 
-### Screenshots
+### Images
 
-The current screenshots probably show the 2.0 interface, so replace them. The store takes 1280×800 or 640×400 images, up to five. Good candidates:
+All the images are in [`images/`](images/). They are rendered from the real popup and settings page, using sample tab names so no real account shows. To make them again after a UI change, run `npm run store-images` (needs Google Chrome or Chromium).
 
-1. The popup open over the X home page with Following selected.
-2. The settings page in light mode.
-3. The settings page in dark mode.
+**Screenshots** (1280×800, square corners, no padding). Delete the 2.0 screenshots and upload these in order:
+
+| File | Shows |
+| --- | --- |
+| `images/en/screenshot-1.png` | The popup over the X home page, with Following selected |
+| `images/en/screenshot-2.png` | The settings page: default tab and Following sort |
+| `images/en/screenshot-3.png` | The popup in light and dark mode, in English and Turkish |
+| `images/en/screenshot-4.png` | Privacy: one permission, no network requests, no trackers, open source |
+
+For the Turkish listing, upload `images/tr/screenshot-1.png` to `screenshot-4.png` the same way.
+
+**Promo tiles.** Following Google's advice, these have no text, so one set serves every language:
+
+- Small promo tile (440×280): `images/promo/small-440x280.png`. This is optional, but listings without one are shown after listings that have one.
+- Marquee promo tile (1400×560): `images/promo/marquee-1400x560.png`. Optional; without it the extension can't be featured in the marquee.
+
+**Store icon.** This comes from the package (`src/icons/icon128.png`). Google recommends 96×96 artwork with 16px of transparent padding on each side. Ours fills 116px, so it looks a little larger than its neighbours in the store. That is a recommendation, not a rule. Changing it would mean a new package (2.1.1), because 2.1.0 is already tagged.
 
 ## Privacy practices tab
 

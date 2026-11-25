@@ -65,7 +65,7 @@ Use a short summary line in the present tense ("Fix sort menu detection in Japan
 
 1. Update `version` in `src/manifest.json` and move the changelog's "Unreleased" section under the new version and date.
 2. Update `PRIVACY_POLICY.md` if the stored data or permissions changed.
-3. Run `npm run build` and upload `dist/twitter-default-following-tab-v<version>.zip` to the Chrome Web Store Developer Dashboard.
+3. Run `npm run build` and upload `dist/twitter-default-following-tab-v<version>.zip` to the Chrome Web Store Developer Dashboard. If the interface changed, run `npm run store-images` and replace the screenshots too. Paste the listing text from `store/chrome-web-store.md`.
 4. Tag the release: `git tag v<version>` and push the tag.
 
 ## License

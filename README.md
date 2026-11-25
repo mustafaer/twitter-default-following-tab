@@ -96,6 +96,7 @@ npm test        # run the test suite
 npm run lint    # check code style
 npm run build   # validate src/ and create dist/twitter-default-following-tab-v<version>.zip
 npm run icons   # re-render src/icons/*.png from assets/icon.svg (needs librsvg)
+npm run store-images  # re-render the Chrome Web Store images in store/images/ (needs Chrome)
 ```
 
 Load `src/` unpacked in Chrome to try changes. After editing, click the reload button on `chrome://extensions` and reload the X tab.
@@ -119,7 +120,8 @@ src/                     the extension (this folder is what ships)
 ├── _locales/            translations (en, tr)
 └── icons/
 assets/icon.svg          icon source
-scripts/                 build, validation and icon scripts
+scripts/                 build, validation, icon and store image scripts
+store/                   Chrome Web Store listing text and images
 tests/                   node:test suites, with a fake X home page built on jsdom
 ```
 
