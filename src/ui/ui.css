@@ -1,0 +1,350 @@
+/*
+ * Twitter Default Following Tab: shared styles for the popup and the settings page.
+ * Follows the system light/dark preference. No web fonts, no network requests.
+ */
+
+:root {
+  color-scheme: light dark;
+  --bg: #f7f9f9;
+  --bg-glow: rgba(29, 155, 240, 0.12);
+  --surface: rgba(255, 255, 255, 0.86);
+  --surface-strong: #ffffff;
+  --field: #eff3f4;
+  --field-hover: #e4eaec;
+  --border: #cfd9de;
+  --text: #0f1419;
+  --muted: #536471;
+  --accent: #1d9bf0;
+  --accent-hover: #1a8cd8;
+  --accent-soft: rgba(29, 155, 240, 0.14);
+  --on-accent: #ffffff;
+  --track-off: #b9c5cc;
+  --success-text: #00754a;
+  --success-bg: rgba(0, 186, 124, 0.12);
+  --error-text: #c4111b;
+  --error-bg: rgba(244, 33, 46, 0.1);
+  --shadow: 0 8px 28px rgba(15, 20, 25, 0.1);
+  --radius: 14px;
+  --radius-small: 10px;
+  --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #15202b;
+    --bg-glow: rgba(29, 155, 240, 0.16);
+    --surface: rgba(30, 39, 50, 0.82);
+    --surface-strong: #1e2732;
+    --field: #273340;
+    --field-hover: #2f3d4c;
+    --border: #38444d;
+    --text: #e7e9ea;
+    --muted: #8b98a5;
+    --accent-soft: rgba(29, 155, 240, 0.2);
+    --track-off: #4a5866;
+    --success-text: #33d69f;
+    --success-bg: rgba(0, 186, 124, 0.16);
+    --error-text: #ff6b74;
+    --error-bg: rgba(244, 33, 46, 0.16);
+    --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+}
+
+body {
+  font: 14px/1.4 var(--font);
+  color: var(--text);
+  background: var(--bg) radial-gradient(circle at 100% 0%, var(--bg-glow), transparent 55%) no-repeat;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+p {
+  margin: 0;
+}
+
+a {
+  color: var(--accent);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(16px);
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.small {
+  font-size: 12px;
+}
+
+/* Header */
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo {
+  flex: none;
+  border-radius: 8px;
+}
+
+.header h1 {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+/* Rows and fields */
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.field {
+  display: grid;
+  gap: 6px;
+  border: 0;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+  transition: opacity 0.2s ease;
+}
+
+.field.is-off {
+  opacity: 0.5;
+}
+
+.label {
+  font-weight: 600;
+}
+
+/* Switch */
+
+.switch {
+  position: relative;
+  flex: none;
+  width: 44px;
+  height: 26px;
+}
+
+.switch input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.switch-track {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  background: var(--track-off);
+}
+
+.switch-track::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* Animate the switch only after the saved state is on screen, not while the page opens. */
+.is-ready .switch-track {
+  transition: background-color 0.2s ease;
+}
+
+.is-ready .switch-track::after {
+  transition: transform 0.2s ease;
+}
+
+.switch input:checked + .switch-track {
+  background: var(--accent);
+}
+
+.switch input:checked + .switch-track::after {
+  transform: translateX(18px);
+}
+
+.switch input:focus-visible + .switch-track {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Select */
+
+.select {
+  position: relative;
+}
+
+.select::after {
+  content: "";
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  width: 8px;
+  height: 5px;
+  margin-top: -2px;
+  background: var(--muted);
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  pointer-events: none;
+}
+
+select {
+  width: 100%;
+  padding: 10px 36px 10px 12px;
+  font: inherit;
+  color: var(--text);
+  background: var(--field);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-small);
+  appearance: none;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+select:hover:not(:disabled) {
+  background: var(--field-hover);
+  border-color: var(--accent);
+}
+
+select:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+select:disabled {
+  cursor: not-allowed;
+}
+
+option {
+  color: var(--text);
+  background: var(--surface-strong);
+}
+
+/* Buttons and links */
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 14px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  text-decoration: none;
+  background: var(--field);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-small);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.button:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.button svg {
+  width: 15px;
+  height: 15px;
+  fill: currentColor;
+}
+
+/* Status message: shown in place, so saving never moves the layout */
+
+.status {
+  font-size: 12px;
+  font-weight: 600;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.status.is-visible {
+  opacity: 1;
+}
+
+.status[data-kind="success"] {
+  color: var(--success-text);
+}
+
+.status[data-kind="success"]::before {
+  content: "\2713\00a0";
+}
+
+.status[data-kind="error"] {
+  color: var(--error-text);
+}
+
+/* In the popup header the status briefly takes the version line's place. */
+.meta {
+  display: grid;
+}
+
+.meta > * {
+  grid-area: 1 / 1;
+}
+
+.meta .version {
+  transition: opacity 0.2s ease;
+}
+
+.meta .status.is-visible + .version {
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "name": "twitter-default-following-tab",
+  "private": true,
+  "description": "Chrome extension that opens the Following tab on X (Twitter) automatically.",
+  "homepage": "https://github.com/mustafaer/twitter-default-following-tab",
+  "license": "GPL-3.0-or-later",
+  "scripts": {
+    "lint": "eslint .",
+    "test": "node --test \"tests/**/*.test.js\"",
+    "validate": "node scripts/validate.js",
+    "build": "bash scripts/build.sh",
+    "icons": "bash scripts/icons.sh",
+    "check": "npm run lint && npm test && npm run build"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.15.0",
+    "globals": "^17.14.0",
+    "jsdom": "^26.1.0"
+  }
+}
